@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.8px);
+    -webkit-backdrop-filter: blur(8.8px);
+  }
+  .blured {
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10.3px);
+    -webkit-backdrop-filter: blur(10.3px);
+  }
+  .shodow-max {
+    -webkit-box-shadow: inset 0px 0px 39px -15px rgba(0,0,0,0.19);
+    -moz-box-shadow: inset 0px 0px 39px -15px rgba(0,0,0,0.19);
+    box-shadow: inset 0px 0px 39px -15px rgba(0,0,0,0.19);
+  }
+}

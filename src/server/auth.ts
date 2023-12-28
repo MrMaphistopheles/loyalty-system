@@ -1,12 +1,13 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { UserRole } from "@prisma/client";
+
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-
-
+import "next-auth/jwt";
 import { db } from "@/server/db";
 
 /**
@@ -15,12 +16,20 @@ import { db } from "@/server/db";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
+declare module "next-auth/jwt" {
+  /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
+  interface JWT {
+    id?: string;
+    role?: UserRole | null;
+  }
+}
+
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      role: UserRole | null;
     } & DefaultSession["user"];
   }
 
@@ -37,20 +46,83 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async session({ session, user }) {
+      const dbUser = await db.user.findFirst({
+        where: {
+          email: user?.email,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
+        },
+      });
+
+      if (dbUser) {
+        session.user.id = dbUser.id;
+        session.user.name = dbUser.name;
+        session.user.email = dbUser.email;
+        session.user.image = dbUser.image;
+        session.user.role = dbUser.role as UserRole;
+      }
+
+      return session;
+    },
+    async signIn({ user, profile }) {
+      const linkedAccount = await db.user.findUnique({
+        where: {
+          email: profile?.email,
+        },
+      });
+
+      console.log(linkedAccount);
+      if (linkedAccount?.name === null) {
+        await db.user.update({
+          where: {
+            id: linkedAccount.id,
+          },
+          data: {
+            name: profile?.name,
+            image: profile?.picture,
+          },
+        });
+      }
+      if (linkedAccount?.image === null) {
+        await db.user.update({
+          where: {
+            id: linkedAccount.id,
+          },
+          data: {
+            image: profile?.picture,
+          },
+        });
+      }
+      if (linkedAccount) {
+        return true;
+      } else {
+        await db.user.create({
+          data: {
+            name: profile?.name,
+            email: profile?.email,
+            image: profile?.picture,
+          },
+        });
+        return true;
+      }
+    },
+  },
+  pages: {
+    signIn: "/signin",
   },
   adapter: PrismaAdapter(db),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-    })
+      allowDangerousEmailAccountLinking: true,
+    }),
     /**
      * ...add more providers here.
      *
