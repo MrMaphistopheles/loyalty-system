@@ -33,6 +33,23 @@ declare module "next-auth" {
     } & DefaultSession["user"];
   }
 
+  export interface Profile {
+    iss?: string;
+    azp?: string;
+    aud?: string;
+    sub?: string;
+    email?: string;
+    email_verified?: boolean;
+    at_hash?: string;
+    name?: string;
+    picture?: string;
+    given_name?: string;
+    family_name?: string;
+    locale?: string;
+    iat?: number;
+    exp?: number;
+  }
+
   // interface User {
   //   // ...other properties
   //   // role: UserRole;
@@ -70,14 +87,15 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
-    async signIn({ user, profile }) {
+    async signIn({ profile }) {
       const linkedAccount = await db.user.findUnique({
         where: {
           email: profile?.email,
         },
       });
 
-      console.log(linkedAccount);
+      console.log(profile);
+
       if (linkedAccount?.name === null) {
         await db.user.update({
           where: {
