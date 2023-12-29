@@ -29,10 +29,12 @@
     "next-auth": "^4.24.5",
     "qrcode.react": "^3.1.0",
     "react": "18.2.0",
+    "react-color": "^2.19.3",
     "react-dom": "18.2.0",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
     "use-file-picker": "^2.1.1",
+    "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -41,7 +43,9 @@
     "@types/eslint": "^8.44.7",
     "@types/node": "^18.17.0",
     "@types/react": "^18.2.37",
+    "@types/react-color": "^3.0.10",
     "@types/react-dom": "^18.2.15",
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "autoprefixer": "^10.4.14",

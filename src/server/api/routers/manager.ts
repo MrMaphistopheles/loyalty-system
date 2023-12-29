@@ -6,6 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
+import { uploadImage } from "@/server/func/uploadImage";
 
 export type Created =
   | {
@@ -126,4 +127,37 @@ export const managerRouter = createTRPCRouter({
         },
       });
     }),
+  updateTheme: protectedProcedure
+    .input(z.object({ color: z.string(), image: z.string(), name: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const path = await uploadImage(input.image, input.name);
+      return await ctx.db.theme.updateMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        data: {
+          image: path,
+          color: input.color,
+        },
+      });
+    }),
+  updateOnlyColorTheme: protectedProcedure
+    .input(z.object({ color: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.theme.updateMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        data: {
+          color: input.color,
+        },
+      });
+    }),
+  loadTheme: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.theme.findFirst({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+  }),
 });

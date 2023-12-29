@@ -87,11 +87,11 @@ export default function Card() {
           <div key={index} onClick={() => changePosition(index)}>
             <Pass
               z={show === index ? fakeData.length : index}
-              t={index*50}
+              t={index * 50}
               name={i.name}
               translate={
                 show === index
-                  ? -(height / 11 + index * 2 * (index * 1) * (index * 0.7))
+                  ? -(height / 12 + index * 2.5)
                   : height / 9
               }
               show={show === index ? true : false}
@@ -204,7 +204,7 @@ function ButtonAddToGoogleWallet() {
   );
 }
 
-function Pass({
+export function Pass({
   z,
   t,
   name,
@@ -217,12 +217,15 @@ function Pass({
   linkToMenu,
   qrVal,
   icon,
+  visble,
+  position,
+  onClick,
 }: {
   z: number;
   t: number;
   name: string;
   translate: number;
-  show: boolean;
+  show?: boolean;
   color: string | undefined;
   userName: string;
   countOf: number;
@@ -230,33 +233,43 @@ function Pass({
   linkToMenu: string;
   qrVal: string;
   icon?: string | null;
+  visble?: boolean;
+  position?: "relative" | "absolute" | "fixed" | "sticky" | undefined;
+  onClick?: () => void;
 }) {
   const transition: number = translate;
+
+  console.log(color);
+
   return (
     <div
-      className="absolute flex w-full flex-col items-center justify-center gap-3"
+      className="flex w-full flex-col items-center justify-center gap-3"
       style={{
         zIndex: `${z}`,
         top: `${t}px`,
         transform: `translate(0, ${transition}%)`,
         transition: `0.8s linear`,
+        position: position === undefined ? "absolute" : position,
       }}
     >
       <div className="glass flex w-full flex-col items-center justify-center rounded-3xl">
         <div
           className="flex w-full items-center justify-start gap-3 rounded-t-3xl px-6 py-3"
-          style={{ backgroundColor: `#${color}` }}
+          style={{ backgroundColor: `#${color}`, transition: "0.3s linear" }}
         >
           <Avatar
+            onClick={onClick}
             size="lg"
             src={icon !== null ? icon : ""}
             fallback={<CameraIcon size={35} />}
           />
           <h1 className="text-xl text-white">{name}</h1>
         </div>
-        <div className="flex w-full items-center justify-between gap-3 rounded-t-3xl px-6 py-3">
-          <h1 className="text-lg text-white">{userName}</h1>
-          <h1 className="text-md text-white">До безкоштовної кави {countOf} покупок</h1>
+        <div className="flex w-full items-center justify-between gap-3 rounded-t-3xl p-4">
+          <h1 className="text-lg text-black">{userName}</h1>
+          <h1 className="text-md text-black">
+            До безкоштовної кави {countOf} покупок
+          </h1>
         </div>
         {show ? (
           <motion.div
@@ -272,7 +285,9 @@ function Pass({
           </motion.div>
         ) : null}
       </div>
-      {show ? (
+      {visble === false ? (
+        visble
+      ) : show ? (
         <motion.div
           className="glass flex w-full items-center justify-center gap-3 rounded-3xl p-4"
           initial={{ opacity: 0 }}
