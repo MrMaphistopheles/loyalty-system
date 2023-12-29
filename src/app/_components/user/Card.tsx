@@ -92,7 +92,7 @@ export default function Card() {
               translate={
                 show === index
                   ? -(height / 11 + index * 2 * (index * 1) * (index * 0.7))
-                  : height / 7
+                  : height / 9
               }
               show={show === index ? true : false}
               userName={session?.user.name ?? "s"}
