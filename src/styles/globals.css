@@ -16,8 +16,27 @@
     -webkit-backdrop-filter: blur(10.3px);
   }
   .shodow-max {
-    -webkit-box-shadow: inset 0px 0px 39px -15px rgba(0,0,0,0.19);
-    -moz-box-shadow: inset 0px 0px 39px -15px rgba(0,0,0,0.19);
-    box-shadow: inset 0px 0px 39px -15px rgba(0,0,0,0.19);
+    -webkit-box-shadow: inset 0px 0px 39px -15px rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: inset 0px 0px 39px -15px rgba(0, 0, 0, 0.19);
+    box-shadow: inset 0px 0px 39px -15px rgba(0, 0, 0, 0.19);
+  }
+  .gradient {
+    background: rgb(255, 231, 185);
+    background: -moz-linear-gradient(
+      36deg,
+      rgba(255, 231, 185, 1) 0%,
+      rgba(0, 255, 254, 1) 100%
+    );
+    background: -webkit-linear-gradient(
+      36deg,
+      rgba(255, 231, 185, 1) 0%,
+      rgba(0, 255, 254, 1) 100%
+    );
+    background: linear-gradient(
+      36deg,
+      rgba(255, 231, 185, 1) 0%,
+      rgba(0, 255, 254, 1) 100%
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffe7b9",endColorstr="#00fffe",GradientType=1);
   }
 }

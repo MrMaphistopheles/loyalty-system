@@ -2,7 +2,7 @@ import SignInBtn from "@/app/_components/elements/SignInBtn";
 import Image from "next/image";
 export default function SignIn() {
   return (
-    <div className="flex h-[100dvh] items-center justify-center bg-gradient-to-tr from-fuchsia-300 to-cyan-300 px-8">
+    <div className="flex h-[100dvh] items-center justify-center  px-8">
       <div
         style={{
           backgroundColor: "rgba(255, 255, 255, 0.06)",

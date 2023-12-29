@@ -23,10 +23,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerAuthSession()
+  const session = await getServerAuthSession();
   return (
-    <html lang="en" className="light dark:dark">
-      <body className={`font-sans ${inter.variable} bg-gradient-to-tr from-fuchsia-300 to-cyan-300`}>
+    <html lang="en" className="gradient">
+      <body className={`font-sans ${inter.variable} `}>
         <TRPCReactProvider cookies={cookies().toString()} session={session}>
           <UiProvider>{children}</UiProvider>
         </TRPCReactProvider>
@@ -34,3 +34,5 @@ export default async function RootLayout({
     </html>
   );
 }
+
+//bg-gradient-to-tr from-fuchsia-300 to-cyan-300

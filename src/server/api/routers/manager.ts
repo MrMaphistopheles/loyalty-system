@@ -50,7 +50,7 @@ export const managerRouter = createTRPCRouter({
       return createdUser;
     }),
   delete: protectedProcedure
-    .input(z.object({ id: z.string().min(5) }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const deleted = await ctx.db.user.delete({
         where: {

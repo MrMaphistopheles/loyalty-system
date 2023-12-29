@@ -28,7 +28,7 @@ export const adminRouter = createTRPCRouter({
       return createdUser;
     }),
   delete: protectedProcedure
-    .input(z.object({ id: z.string().min(5) }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const userId = await ctx.db.user.findUnique({
         where: {
@@ -51,6 +51,7 @@ export const adminRouter = createTRPCRouter({
           },
         },
       });
+
       return deleted;
     }),
   getUser: protectedProcedure.query(async ({ ctx }) => {

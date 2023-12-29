@@ -14,7 +14,6 @@ import { UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Created } from "@/server/api/routers/manager";
 
-
 type Role = "admin" | "manager";
 
 export default function DashBord({ role }: { role: Role }) {
@@ -24,12 +23,31 @@ export default function DashBord({ role }: { role: Role }) {
 
   const { mutate, isLoading, isError, isSuccess } =
     api[role as Role].create.useMutation();
-  const {
-    mutate: Delete,
-    isLoading: isLDelete,
-    isError: isEDelete,
-    isSuccess: isSDelete,
-  } = api[role as Role].delete.useMutation();
+
+  let deleteUser: ({ id }: { id: string }) => Promise<void> | void;
+  let isLDelete = false;
+  let isEDelete = false;
+  let isSDelete = false;
+
+  if (role === "admin") {
+    const deleteUserMutation = api.admin.delete.useMutation();
+
+    deleteUser = deleteUserMutation.mutate;
+    isLDelete = deleteUserMutation.isLoading;
+    isEDelete = deleteUserMutation.isError;
+    isSDelete = deleteUserMutation.isSuccess;
+  } else if (role === "manager") {
+    const deleteUserMutation = api.manager.delete.useMutation();
+
+    deleteUser = deleteUserMutation.mutate;
+    isLDelete = deleteUserMutation.isLoading;
+    isEDelete = deleteUserMutation.isError;
+    isSDelete = deleteUserMutation.isSuccess;
+  }
+
+  const handleDelete = (id: string) => {
+    deleteUser({ id });
+  };
 
   let data;
   let isLoadingData = false;
@@ -69,11 +87,6 @@ export default function DashBord({ role }: { role: Role }) {
     mutate({
       name: name,
       email: email,
-    });
-  };
-  const handleDelete = (id: string) => {
-    Delete({
-      id: id,
     });
   };
 
