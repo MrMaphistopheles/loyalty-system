@@ -98,7 +98,7 @@ export default function Setting() {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-col items-center justify-center gap-2 dark:text-white">
         <div className="glass flex w-full flex-col items-center justify-center gap-2 rounded-2xl px-8  py-5">
           <h1 className="py-2 text-lg">Налаштування бонусної системи.</h1>
           {isSuccess && items !== undefined ? (
@@ -125,7 +125,7 @@ export default function Setting() {
 
           <Button
             size="lg"
-            className="w-full bg-black text-white"
+            className="w-full bg-black text-white dark:bg-white dark:text-black"
             isLoading={upLoading}
             onClick={handleMutation}
           >
@@ -134,7 +134,7 @@ export default function Setting() {
             ) : (
               <>
                 <svg
-                  className="h-6 w-6 text-white"
+                  className="h-6 w-6 text-white dark:text-black"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -148,7 +148,7 @@ export default function Setting() {
             )}
           </Button>
         </div>
-        <div className="glass flex w-full flex-col items-center justify-center gap-3 rounded-2xl px-8  py-5">
+        <div className="glass flex w-full flex-col items-center justify-center gap-2 rounded-2xl px-8  py-5">
           <h1 className="py-2 text-lg">Посилання для реєстрації клієнтів.</h1>
           <div className="flex w-full items-center justify-normal gap-2">
             <Input
@@ -161,13 +161,13 @@ export default function Setting() {
             />
             <Button
               isIconOnly
-              className="bg-black"
+              className="bg-black dark:bg-white dark:text-black"
               size="lg"
               onClick={handleCopy}
             >
               {copy ? (
                 <svg
-                  className="h-6 w-6 text-white"
+                  className="h-6 w-6 text-white dark:text-black"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -183,7 +183,7 @@ export default function Setting() {
                 </svg>
               ) : (
                 <svg
-                  className="h-6 w-6 text-white"
+                  className="h-6 w-6 text-white dark:text-black"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -196,7 +196,7 @@ export default function Setting() {
             </Button>
           </div>
 
-          <div className="rounded-lg bg-white p-3">
+          <div className="rounded-lg bg-white p-3 my-2">
             <QRCodeCanvas
               value={
                 `http://bonuslite.com/register?id=${session?.user.id}` ?? ""
@@ -205,11 +205,11 @@ export default function Setting() {
           </div>
           <Button
             size="lg"
-            className="w-full bg-black text-white"
+            className="w-full bg-black text-white dark:bg-white dark:text-black"
             onClick={() => handleSaveAsPNG(canvas)}
           >
             <svg
-              className="h-6 w-6 text-white"
+              className="h-6 w-6 text-white  dark:text-black"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"

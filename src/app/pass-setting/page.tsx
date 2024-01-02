@@ -114,12 +114,12 @@ export default function page() {
       <br />
       <Button
         size="lg"
-        className="w-10/12 bg-black text-white"
+        className="w-10/12 bg-black text-white dark:bg-white dark:text-black"
         isLoading={upLoading || colorLoading}
         onClick={handleUpdate}
       >
         <svg
-          className="h-6 w-6 text-white"
+          className="h-6 w-6 text-white dark:text-black"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"

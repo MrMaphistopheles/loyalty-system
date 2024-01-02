@@ -9,14 +9,7 @@ import { useSession } from "next-auth/react";
 import { api } from "@/trpc/react";
 import { type UserPasses } from "@/server/api/routers/user";
 
-type Data = {
-  id: string | undefined;
-  name: string | null | undefined;
-  color: string | undefined;
-  logo: string | null | undefined;
-  giftForP: number | undefined;
-  points: number | undefined;
-};
+
 
 const fakeData = [
   { name: "SOMENAME", color: "#03fce8", count: 5 },
@@ -239,7 +232,7 @@ export function Pass({
 }) {
   const transition: number = translate;
 
-  console.log(color);
+
 
   return (
     <div
@@ -266,8 +259,8 @@ export function Pass({
           <h1 className="text-xl text-white">{name}</h1>
         </div>
         <div className="flex w-full items-center justify-between gap-3 rounded-t-3xl p-4">
-          <h1 className="text-lg text-black">{userName}</h1>
-          <h1 className="text-md text-black">
+          <h1 className="text-lg text-black dark:text-white">{userName}</h1>
+          <h1 className="text-md text-black dark:text-white">
             До безкоштовної кави {countOf} покупок
           </h1>
         </div>

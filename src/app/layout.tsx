@@ -25,7 +25,7 @@ export default async function RootLayout({
 }) {
   const session = await getServerAuthSession();
   return (
-    <html lang="en" className="gradient">
+    <html lang="en">
       <body className={`font-sans ${inter.variable} `}>
         <TRPCReactProvider cookies={cookies().toString()} session={session}>
           <UiProvider>{children}</UiProvider>

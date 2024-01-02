@@ -5,6 +5,8 @@ import Avatar from "./Avatar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { Switch } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 
 export default function Layout({
   children,
@@ -14,6 +16,14 @@ export default function Layout({
   customW?: number;
 }) {
   const pathname: string[] = usePathname().split("");
+
+  const [isDark, setIsDark] = useState<boolean>();
+
+  useEffect(() => {
+    const getCurrentTheme = () =>
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setIsDark(getCurrentTheme());
+  }, []);
 
   const { data: session } = useSession();
 
@@ -32,7 +42,14 @@ export default function Layout({
 
   if (session && session.user) {
     return (
-      <div className="flex h-[100dvh] flex-col items-center justify-end">
+      <div
+        className={
+          "flex h-[100dvh] flex-col items-center justify-end" +
+          (isDark
+            ? "text-white dark dark:bg-black"
+            : "text-black light light:bg-[#ebfbff]")
+        }
+      >
         <div className="flex w-full items-center justify-between ">
           {pathname?.length > 1 ? (
             <Link href=".." className="px-3">
@@ -82,7 +99,7 @@ function MenuForAdmin() {
       <Link href="/">
         <div className="hover:blured rounded-2xl p-3">
           <svg
-            className="h-6 w-6 text-slate-800"
+            className="h-6 w-6 text-slate-800 dark:text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -107,7 +124,7 @@ function MenuForAdmin() {
 
       <div className="hover:blured rounded-2xl p-3">
         <svg
-          className="h-6 w-6 text-gray-800"
+          className="h-6 w-6 text-gray-800 dark:text-white"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
@@ -126,7 +143,7 @@ function MenuForManager() {
       <Link href="/">
         <div className="hover:blured rounded-2xl p-3">
           <svg
-            className="h-6 w-6 text-slate-800"
+            className="h-6 w-6 text-slate-800 dark:text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -140,7 +157,7 @@ function MenuForManager() {
       <Link href="/bonus-setting">
         <div className="hover:blured rounded-2xl p-3">
           <svg
-            className="h-6 w-6 text-gray-800 "
+            className="h-6 w-6 text-gray-800 dark:text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -153,7 +170,7 @@ function MenuForManager() {
       <Link href="/pass-setting">
         <div className="hover:blured rounded-2xl p-3">
           <svg
-            className="h-6 w-6 text-gray-800 "
+            className="h-6 w-6 text-gray-800 dark:text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -173,7 +190,7 @@ function MenuForUser() {
       <Link href="/">
         <div className="hover:blured rounded-2xl p-3">
           <svg
-            className="h-6 w-6 text-slate-800"
+            className="h-6 w-6 text-slate-800 dark:text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -200,3 +217,7 @@ function MenuForUser() {
     </div>
   );
 }
+
+
+
+

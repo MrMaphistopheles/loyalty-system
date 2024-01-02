@@ -10,7 +10,6 @@ import {
   Avatar,
 } from "@nextui-org/react";
 import { useState, useEffect } from "react";
-import { UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Created } from "@/server/api/routers/manager";
 
@@ -91,7 +90,7 @@ export default function DashBord({ role }: { role: Role }) {
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-3">
+    <div className="flex w-full flex-col items-center justify-center gap-3 dark:text-white">
       {isError ?? isErrorData ?? isEDelete ? (
         <div
           className="glass mb-4 flex items-center rounded-lg p-4 text-sm text-red-800"
@@ -144,7 +143,7 @@ export default function DashBord({ role }: { role: Role }) {
         />
         <Button
           size="lg"
-          className="w-full bg-black text-white"
+          className="w-full bg-black text-white dark:bg-white dark:text-black"
           onClick={handleClick}
           isLoading={isLoading}
         >

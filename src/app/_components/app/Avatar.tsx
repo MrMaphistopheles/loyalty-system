@@ -19,13 +19,13 @@ export default function NavMenu() {
 
 
   return (
-    <div className="flex w-full items-center justify-end p-3">
+    <div className="flex w-full items-center justify-end p-3 dark:text-white">
       {session?.user ? (
-        <Dropdown>
+        <Dropdown className="dark:bg-gray-900 dark:text-white">
           <DropdownTrigger>
             <Avatar  src={image} />
           </DropdownTrigger>
-          <DropdownMenu aria-label="Static Actions">
+          <DropdownMenu aria-label="Static Actions" >
             <DropdownItem key="Signed">
               Signed in as {session.user.email}
             </DropdownItem>
