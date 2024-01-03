@@ -160,4 +160,37 @@ export const managerRouter = createTRPCRouter({
       },
     });
   }),
+
+  /// Menu actions
+  addCategory: protectedProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const menu = await ctx.db.menu.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+        },
+      });
+      const category = await ctx.db.categorys.create({
+        data: {
+          name: input.name,
+          menu: {
+            connect: {
+              id: menu?.id,
+            },
+          },
+        },
+      });
+      return category;
+    }),
+
+  getCategory: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.menu.findFirst({
+      where: {
+        userId: ctx.session.user.id,
+      },
+      include: {
+        categorys: true,
+      },
+    });
+  }),
 });

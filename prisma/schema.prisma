@@ -121,6 +121,7 @@ model menu {
 
 model categorys {
     id        String   @id @default(cuid())
+    name      String
     dish      dish[]
     menu      menu?    @relation(fields: [menuId], references: [id])
     menuId    String?
