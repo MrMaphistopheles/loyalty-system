@@ -63,6 +63,7 @@ model User {
     createdBy User[]  @relation(name: "ADMIN")
     created   User[]  @relation(name: "ADMIN")
     Theme     Theme[]
+    menu      menu[]
 }
 
 model VerificationToken {
@@ -107,5 +108,39 @@ model Theme {
     image     String?
     userId    String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+}
+
+model menu {
+    id        String      @id @default(cuid())
+    categorys categorys[]
+    createdAt DateTime    @default(now())
+    User      User?       @relation(fields: [userId], references: [id])
+    userId    String?
+}
+
+model categorys {
+    id        String   @id @default(cuid())
+    dish      dish[]
+    menu      menu?    @relation(fields: [menuId], references: [id])
+    menuId    String?
+    createdAt DateTime @default(now())
+}
+
+model dish {
+    id          String     @id @default(cuid())
+    name        String
+    description String
+    images      images[]
+    categorys   categorys? @relation(fields: [categorysId], references: [id])
+    categorysId String?
+    createdAt   DateTime   @default(now())
+}
+
+model images {
+    id        String   @id @default(cuid())
+    path      String
+    dish      dish?    @relation(fields: [dishId], references: [id])
+    dishId    String?
     createdAt DateTime @default(now())
 }

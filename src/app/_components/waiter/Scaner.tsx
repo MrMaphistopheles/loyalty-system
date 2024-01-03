@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import { Button } from "@nextui-org/react";
+import { Button, CircularProgress } from "@nextui-org/react";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 
 type Data = {
@@ -18,7 +18,7 @@ export default function Scaner() {
   };
 
   if (isLoading) {
-    return <div>Loadin...</div>;
+    return <Loading />;
   }
   if (isError) {
     return <div>server error</div>;
@@ -188,6 +188,20 @@ function Counted() {
       >
         Повернутися
       </Button>
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="flex items-center justify-center">
+      <CircularProgress
+        classNames={{
+          svg: "w-14 h-14",
+          indicator: "stroke-blue-500",
+          track: "stroke-blue-500/10",
+        }}
+      />
     </div>
   );
 }

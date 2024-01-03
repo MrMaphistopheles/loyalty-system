@@ -17,6 +17,9 @@ export const adminRouter = createTRPCRouter({
           Theme: {
             create: {},
           },
+          menu: {
+            create: {},
+          },
           createdBy: {
             connect: {
               id: ctx.session.user.id,

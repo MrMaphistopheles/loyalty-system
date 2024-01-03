@@ -53,13 +53,15 @@ export const waiterRouter = createTRPCRouter({
                 balance: 0,
               },
             });
-            const history = ctx.db.purchaseHistory.create({
+            const history = await ctx.db.purchaseHistory.create({
               data: {
                 userId: ctx.session.user.id,
                 bonusAccId: user?.bonusAcc[0]?.id,
                 gotFree: "yes",
               },
             });
+            //console.log(history);
+            
             status = 200;
           } else if (balance < giftFor) {
             const bonusAcc = await ctx.db.bonusAcc.update({
@@ -70,12 +72,13 @@ export const waiterRouter = createTRPCRouter({
                 balance: balance + 1,
               },
             });
-            const history = ctx.db.purchaseHistory.create({
+            const history = await ctx.db.purchaseHistory.create({
               data: {
                 userId: ctx.session.user.id,
                 bonusAccId: user?.bonusAcc[0]?.id,
               },
             });
+            //console.log(history);
             status = 201;
           }
         }

@@ -9,6 +9,12 @@
     backdrop-filter: blur(8.8px);
     -webkit-backdrop-filter: blur(8.8px);
   }
+  .glass-sm-sh {
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.8px);
+    -webkit-backdrop-filter: blur(8.8px);
+  }
   .blured {
     background: rgba(255, 255, 255, 0.25);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -38,5 +44,23 @@
       rgba(0, 255, 254, 1) 100%
     );
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffe7b9",endColorstr="#00fffe",GradientType=1);
+  }
+  .hide-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scroll {
+    display: none;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .color-of-spesial-black {
+    color: #333333;
+  }
+  .color-greay {
+    color: #9f9f9f;
+  }
+  .warm-color {
+    color: #e6795e;
   }
 }

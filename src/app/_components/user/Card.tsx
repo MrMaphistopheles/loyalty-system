@@ -9,8 +9,6 @@ import { useSession } from "next-auth/react";
 import { api } from "@/trpc/react";
 import { type UserPasses } from "@/server/api/routers/user";
 
-
-
 const fakeData = [
   { name: "SOMENAME", color: "#03fce8", count: 5 },
   { name: "SOMENAME", color: "#fc03ec", count: 8 },
@@ -83,9 +81,7 @@ export default function Card() {
               t={index * 50}
               name={i.name}
               translate={
-                show === index
-                  ? -(height / 12 + index * 2.5)
-                  : height / 9
+                show === index ? -(height / 12 + index * 2.5) : height / 9
               }
               show={show === index ? true : false}
               userName={session?.user.name ?? "s"}
@@ -97,7 +93,7 @@ export default function Card() {
               color={i.Theme[0]?.color}
               icon={i.Theme[0]?.image}
               linkToGoogleW="/some"
-              linkToMenu="/menu"
+              linkToMenu={`/menu?id=${i.id}`}
               qrVal={session?.user.id ?? ""}
             />
           </div>
@@ -136,12 +132,12 @@ const CameraIcon = ({
   );
 };
 
-function ButtonAddToGoogleWallet() {
+function ButtonAddToGoogleWallet({ width }: { width: number }) {
   return (
-    <div className="w-full">
+    <div className={`h-12 w-${width}`}>
       <svg
         width="100%"
-        height="55"
+        height="100%"
         viewBox="0 0 227 55"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -232,8 +228,6 @@ export function Pass({
 }) {
   const transition: number = translate;
 
-
-
   return (
     <div
       className="flex w-full flex-col items-center justify-center gap-3"
@@ -289,10 +283,10 @@ export function Pass({
           exit={{ opacity: 0 }}
         >
           <Link href={linkToGoogleW}>
-            <ButtonAddToGoogleWallet />
+            <ButtonAddToGoogleWallet width={6/12}/>
           </Link>
           <Link href={linkToMenu}>
-            <Button className=" h-14 w-9/12 rounded-full bg-white text-lg text-black">
+            <Button className=" h-12 w-6/12 rounded-full bg-white text-lg text-black">
               Menu
             </Button>
           </Link>

@@ -5,15 +5,16 @@ import Avatar from "./Avatar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Switch } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
 export default function Layout({
   children,
   customW,
+  isVisible,
 }: {
   children: React.ReactNode;
   customW?: number;
+  isVisible?: boolean;
 }) {
   const pathname: string[] = usePathname().split("");
 
@@ -50,23 +51,26 @@ export default function Layout({
             : "text-black light light:bg-[#ebfbff]")
         }
       >
-        <div className="flex w-full items-center justify-between ">
-          {pathname?.length > 1 ? (
-            <Link href=".." className="px-3">
-              <svg
-                className="h-6 w-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 10 16"
-              >
-                <path d="M8.766.566A2 2 0 0 0 6.586 1L1 6.586a2 2 0 0 0 0 2.828L6.586 15A2 2 0 0 0 10 13.586V2.414A2 2 0 0 0 8.766.566Z" />
-              </svg>
-            </Link>
-          ) : null}
+        {isVisible === undefined ? (
+          <div className="flex w-full items-center justify-between ">
+            {pathname?.length > 1 ? (
+              <Link href=".." className="px-3">
+                <svg
+                  className="h-6 w-6 text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 10 16"
+                >
+                  <path d="M8.766.566A2 2 0 0 0 6.586 1L1 6.586a2 2 0 0 0 0 2.828L6.586 15A2 2 0 0 0 10 13.586V2.414A2 2 0 0 0 8.766.566Z" />
+                </svg>
+              </Link>
+            ) : null}
 
-          <Avatar />
-        </div>
+            <Avatar />
+          </div>
+        ) : null}
+
         <motion.div
           className={`flex h-full w-full flex-col items-center justify-center`}
           style={{
@@ -79,14 +83,15 @@ export default function Layout({
         >
           {children}
         </motion.div>
-
-        <div className="static bottom-0 flex h-20 w-full items-center justify-center p-6">
-          {session.user.role === "ADMIN" ? (
-            <MenuForAdmin />
-          ) : session.user.role === "MANAGER" ? (
-            <MenuForManager />
-          ) : null}
-        </div>
+        {session.user.role === "USER" ? null : (
+          <div className="static bottom-0 flex h-20 w-full items-center justify-center p-6">
+            {session.user.role === "ADMIN" ? (
+              <MenuForAdmin />
+            ) : session.user.role === "MANAGER" ? (
+              <MenuForManager />
+            ) : null}
+          </div>
+        )}
       </div>
     );
   }
@@ -180,6 +185,19 @@ function MenuForManager() {
           </svg>
         </div>
       </Link>
+      <Link href="/menu-setting">
+        <div className="hover:blured rounded-2xl p-3">
+          <svg
+            className="h-6 w-6 text-gray-800 dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 16 20"
+          >
+            <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z" />
+          </svg>
+        </div>
+      </Link>
     </div>
   );
 }
@@ -217,7 +235,3 @@ function MenuForUser() {
     </div>
   );
 }
-
-
-
-
