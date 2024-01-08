@@ -12,6 +12,13 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { api } from "@/trpc/react";
+import { useFilePicker } from "use-file-picker";
+import {
+  FileAmountLimitValidator,
+  FileTypeValidator,
+  FileSizeValidator,
+  ImageDimensionsValidator,
+} from "use-file-picker/validators";
 
 export default function EditDish() {
   const searchPram = useSearchParams();
@@ -29,13 +36,20 @@ export default function EditDish() {
       },
     });
 
+  const { mutate: mutateP, isLoading: isLoadingUpdateP } =
+    api.manager.updateDishWithPhoto.useMutation({
+      onSuccess: () => {
+        void refetch();
+      },
+    });
+
   const [price, setPrice] = useState<number>(0);
   const [triger, setTriger] = useState(0);
   const [width, setwidth] = useState(0);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState();
+  const [image, setImage] = useState("");
 
   useEffect(() => {
     if (data && data) {
@@ -43,9 +57,9 @@ export default function EditDish() {
         setDescription(data.description ?? ""),
         setPrice(data.price ?? 0);
       setTriger(data.price ?? 0);
+      setImage(data.images[0]?.path ?? "");
     }
-  }, [data]);
-
+  }, [isSuccess]);
 
   useEffect(() => {
     if (document) {
@@ -54,19 +68,52 @@ export default function EditDish() {
     }
   }, []);
 
-  console.log(price);
+  const { openFilePicker, filesContent, loading, errors } = useFilePicker({
+    readAs: "DataURL",
+    accept: "image/*",
+    multiple: false,
+    validators: [
+      new FileAmountLimitValidator({ max: 1 }),
+      new FileTypeValidator(["jpeg", "png"]),
+      new FileSizeValidator({ maxFileSize: 50 * 1024 * 1024 /* 50 MB */ }),
+      new ImageDimensionsValidator({
+        maxHeight: 1600, // in pixels
+        maxWidth: 2600,
+      }),
+    ],
+  });
+
+  useEffect(() => {
+    if (filesContent[0]?.content !== undefined) {
+      setImage(filesContent[0].content);
+    }
+  }, [filesContent]);
 
   return (
     <Layout gap={3}>
-      <Image
-        src={
-          data && data.images.length !== 0
-            ? data.images[0]?.path
-            : "https://media.cnn.com/api/v1/images/stellar/prod/220526171611-11-classic-french-dishes-ratatouille.jpg?c=original"
-        }
-        alt="Dish Image"
-        width={width}
-      />
+      {image.length > 0 ? (
+        <Image
+          onClick={openFilePicker}
+          src={image}
+          alt="Dish Image"
+          width={width}
+        />
+      ) : (
+        <div
+          className="glass-sm-sh flex h-[15em] w-full flex-col items-center justify-center rounded-3xl"
+          onClick={openFilePicker}
+        >
+          <svg
+            className="h-28 w-28 text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.546.5a9.5 9.5 0 1 0 9.5 9.5 9.51 9.51 0 0 0-9.5-9.5ZM13.788 11h-3.242v3.242a1 1 0 1 1-2 0V11H5.304a1 1 0 0 1 0-2h3.242V5.758a1 1 0 0 1 2 0V9h3.242a1 1 0 1 1 0 2Z" />
+          </svg>
+        </div>
+      )}
 
       {isLoading ? (
         <Loading />
@@ -124,18 +171,32 @@ export default function EditDish() {
 
       <Button
         size="lg"
-        isLoading={isLoadingUpdate}
-        onClick={() =>
+        isLoading={isLoadingUpdate || isLoadingUpdateP}
+        onClick={() => {
+          if (image.length > 1) {
+            console.log("phote");
+
+            mutateP({
+              id: id ?? "",
+              name: name,
+              description: description,
+              price: price,
+              image: image,
+              imageName: filesContent[0]?.name ?? "",
+            });
+          }
           mutate({
             id: id ?? "",
             name: name,
             description: description,
             price: price,
-          })
-        }
+          });
+        }}
         className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
       >
-        {
+        {isLoading ? (
+          "Loading..."
+        ) : (
           <>
             <svg
               className="h-6 w-6 text-white dark:text-black"
@@ -149,7 +210,7 @@ export default function EditDish() {
             </svg>
             Update
           </>
-        }
+        )}
       </Button>
     </Layout>
   );

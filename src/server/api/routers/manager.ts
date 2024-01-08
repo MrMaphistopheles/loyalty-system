@@ -276,4 +276,34 @@ export const managerRouter = createTRPCRouter({
         },
       });
     }),
+  updateDishWithPhoto: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        price: z.number(),
+        description: z.string(),
+        image: z.string(),
+        imageName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const path = await uploadImage(input.image, input.imageName);
+
+      return await ctx.db.dish.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+          description: input.description,
+          price: input.price,
+          images: {
+            create: {
+              path: path,
+            },
+          },
+        },
+      });
+    }),
 });
