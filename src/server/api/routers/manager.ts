@@ -183,7 +183,7 @@ export const managerRouter = createTRPCRouter({
       return category;
     }),
 
-  getCategory: protectedProcedure.query(async ({ ctx }) => {
+  getCategorys: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.menu.findFirst({
       where: {
         userId: ctx.session.user.id,
@@ -193,4 +193,87 @@ export const managerRouter = createTRPCRouter({
       },
     });
   }),
+  deleteCategory: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.categorys.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
+
+  /// dishes
+
+  getCategory: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.categorys.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          dish: true,
+        },
+      });
+    }),
+
+  addDish: protectedProcedure
+    .input(z.object({ name: z.string(), id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.dish.create({
+        data: {
+          categorys: {
+            connect: {
+              id: input.id,
+            },
+          },
+          name: input.name,
+        },
+      });
+    }),
+
+  deleteDish: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.dish.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
+
+  getDish: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.dish.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          images: true,
+        },
+      });
+    }),
+  updateDish: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        price: z.number(),
+        description: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.dish.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+          description: input.description,
+          price: input.price,
+        },
+      });
+    }),
 });

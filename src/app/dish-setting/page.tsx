@@ -4,24 +4,30 @@ import Layout from "../_components/app/Layout";
 import { api } from "@/trpc/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export default function Menu() {
   const [name, setName] = useState("");
   const [heigth, setHeigth] = useState<number>();
 
+  const searchPram = useSearchParams();
+  const id = searchPram.get("id");
+
   const {
     data,
     isLoading: categoryLoading,
     refetch,
-  } = api.manager.getCategorys.useQuery();
+  } = api.manager.getCategory.useQuery({ id: id ?? "" });
 
-  const { mutate, isLoading } = api.manager.addCategory.useMutation({
+  console.log(data);
+
+  const { mutate, isLoading } = api.manager.addDish.useMutation({
     onSuccess: () => {
       void refetch();
     },
   });
   const { mutate: deleteM, isLoading: deleteL } =
-    api.manager.deleteCategory.useMutation({
+    api.manager.deleteDish.useMutation({
       onSuccess: () => {
         void refetch();
       },
@@ -44,19 +50,19 @@ export default function Menu() {
       >
         <div className=" hide-scroll flex w-full flex-col items-center justify-start gap-2 overflow-y-scroll px-2 pb-6">
           {data &&
-            data.categorys.map((i) => (
+            data.dish.map((i) => (
               <div
                 className="glass-sm-sh flex w-full items-center justify-between rounded-lg p-3"
                 key={i.id}
               >
-                <Link href={`/dish-setting?id=${i.id}`}>
+                <Link href={`/edit-dish?id=${i.id}`}>
                   <div className="flex items-center justify-center gap-4">
                     <h1>{i.name}</h1>
                   </div>
                 </Link>
 
                 <div className="flex items-center justify-center gap-2">
-                  <Link href={`/dish-setting?id=${i.id}`}>
+                  <Link href={`/edit-dish?id=${i.id}`}>
                     <Button
                       isIconOnly
                       size="sm"
@@ -72,7 +78,7 @@ export default function Menu() {
                         <path d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z" />
                         <path d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z" />
                       </svg>
-                    </Button>{" "}
+                    </Button>
                   </Link>
 
                   <Button
@@ -117,7 +123,7 @@ export default function Menu() {
             isIconOnly
             size="lg"
             className=" bg-black dark:bg-white dark:text-black"
-            onClick={() => mutate({ name: name })}
+            onClick={() => mutate({ name: name, id: id ?? "" })}
           >
             {isLoading ? (
               <CircularProgress

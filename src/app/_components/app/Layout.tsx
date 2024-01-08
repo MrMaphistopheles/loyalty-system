@@ -11,10 +11,12 @@ export default function Layout({
   children,
   customW,
   isVisible,
+  gap,
 }: {
   children: React.ReactNode;
   customW?: number;
   isVisible?: boolean;
+  gap?: number;
 }) {
   const pathname: string[] = usePathname().split("");
 
@@ -72,7 +74,7 @@ export default function Layout({
         ) : null}
 
         <motion.div
-          className={`flex h-full w-full flex-col items-center justify-center`}
+          className={`dark:text-white flex h-full w-full flex-col items-center justify-center gap-${gap}`}
           style={{
             maxWidth: `${width}rem`,
           }}
