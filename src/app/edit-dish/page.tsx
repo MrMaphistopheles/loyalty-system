@@ -53,11 +53,13 @@ export default function EditDish() {
 
   useEffect(() => {
     if (data && data) {
-      setName(data.name),
+      setName(data.name ?? ""),
         setDescription(data.description ?? ""),
         setPrice(data.price ?? 0);
       setTriger(data.price ?? 0);
-      setImage(data.images[0]?.path ?? "");
+      if (data.images && data.images[0]?.path !== undefined) {
+        setImage(data.images[0]?.path);
+      }
     }
   }, [isSuccess]);
 
@@ -89,6 +91,28 @@ export default function EditDish() {
     }
   }, [filesContent]);
 
+  const handleClickUpdate = () => {
+    if (image.length > 1) {
+      console.log("phote");
+
+      mutateP({
+        id: id ?? "",
+        name: name,
+        description: description,
+        price: price,
+        image: image,
+        imageName: filesContent[0]?.name ?? "",
+      });
+    } else {
+      mutate({
+        id: id ?? "",
+        name: name,
+        description: description,
+        price: price,
+      });
+    }
+  };
+
   return (
     <Layout gap={3}>
       {image.length > 0 ? (
@@ -97,7 +121,7 @@ export default function EditDish() {
           src={image}
           alt="Dish Image"
           //width={width}
-          className='max-h-[15em] max-w-[22rem]'
+          className="max-h-[15em] max-w-[22rem]"
         />
       ) : (
         <div
@@ -164,6 +188,12 @@ export default function EditDish() {
             variant="bordered"
             label="Опис"
             size="sm"
+            disableAnimation
+            disableAutosize
+            classNames={{
+              base: "w-full",
+              input: "resize-y min-h-[20px]",
+            }}
             defaultValue={data?.description ?? ""}
             onChange={(e) => setDescription(e.target.value)}
           ></Textarea>
@@ -173,26 +203,7 @@ export default function EditDish() {
       <Button
         size="lg"
         isLoading={isLoadingUpdate || isLoadingUpdateP}
-        onClick={() => {
-          if (image.length > 1) {
-            console.log("phote");
-
-            mutateP({
-              id: id ?? "",
-              name: name,
-              description: description,
-              price: price,
-              image: image,
-              imageName: filesContent[0]?.name ?? "",
-            });
-          }
-          mutate({
-            id: id ?? "",
-            name: name,
-            description: description,
-            price: price,
-          });
-        }}
+        onClick={handleClickUpdate}
         className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
       >
         {isLoading ? (

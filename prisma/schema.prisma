@@ -131,7 +131,7 @@ model categorys {
 model dish {
     id          String     @id @default(cuid())
     name        String
-    description String?    @default("none")
+    description Bytes?
     images      images[]
     price       Int?       @default(0)
     categorys   categorys? @relation(fields: [categorysId], references: [id])

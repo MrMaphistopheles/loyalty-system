@@ -208,7 +208,7 @@ export const managerRouter = createTRPCRouter({
   getCategory: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.categorys.findUnique({
+      const data = await ctx.db.categorys.findUnique({
         where: {
           id: input.id,
         },
@@ -216,6 +216,28 @@ export const managerRouter = createTRPCRouter({
           dish: true,
         },
       });
+
+      type Dish = {
+        id: string | null;
+        name: string | null;
+      };
+
+      let dish: Dish[] = [];
+      data?.dish.forEach((e) => {
+        dish.push({
+          id: e.id,
+          name: e.name,
+        });
+      });
+      const clientData = {
+        id: data?.id,
+        name: data?.name,
+        menuId: data?.menuId,
+        createdAt: data?.createdAt,
+        dish: dish,
+      };
+
+      return clientData;
     }),
 
   addDish: protectedProcedure
@@ -246,7 +268,7 @@ export const managerRouter = createTRPCRouter({
   getDish: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.dish.findUnique({
+      const data = await ctx.db.dish.findUnique({
         where: {
           id: input.id,
         },
@@ -254,6 +276,20 @@ export const managerRouter = createTRPCRouter({
           images: true,
         },
       });
+      console.log(data);
+
+      let dataForClient = {
+        images: data?.images,
+        id: data?.id,
+        name: data?.name,
+        description: data?.description?.toString("utf-8"),
+        price: data?.price,
+        categorysId: data?.categorysId,
+        createdAt: data?.createdAt,
+      };
+      console.log(dataForClient);
+
+      return dataForClient;
     }),
   updateDish: protectedProcedure
     .input(
@@ -265,16 +301,17 @@ export const managerRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.dish.update({
+      const response = await ctx.db.dish.update({
         where: {
           id: input.id,
         },
         data: {
           name: input.name,
-          description: input.description,
+          description: Buffer.from(input.description, "utf-8"),
           price: input.price,
         },
       });
+      return { msg: 200 };
     }),
   updateDishWithPhoto: protectedProcedure
     .input(
@@ -293,25 +330,25 @@ export const managerRouter = createTRPCRouter({
           dishId: input.id,
         },
       });
-      await deleteImageFromBucket(
-        findImage?.path !== undefined ? findImage.path : "",
-      );
 
-      const deleteImage = await ctx.db.images.deleteMany({
-        where: {
-          dishId: input.id,
-        },
-      });
+      if (findImage) {
+        await deleteImageFromBucket(findImage.path);
+        const deleteImage = await ctx.db.images.deleteMany({
+          where: {
+            dishId: input.id,
+          },
+        });
+      }
 
       const path = await uploadImage(input.image, input.imageName);
 
-      return await ctx.db.dish.update({
+      const response = await ctx.db.dish.update({
         where: {
           id: input.id,
         },
         data: {
           name: input.name,
-          description: input.description,
+          description: Buffer.from(input.description, "utf-8"),
           price: input.price,
           images: {
             create: {
@@ -320,5 +357,6 @@ export const managerRouter = createTRPCRouter({
           },
         },
       });
+      return { msg: 200 };
     }),
 });
