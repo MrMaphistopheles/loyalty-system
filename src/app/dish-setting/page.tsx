@@ -85,7 +85,7 @@ export default function Menu() {
                     isIconOnly
                     size="sm"
                     className=" bg-black dark:bg-white dark:text-black"
-                    onClick={() => deleteM({ id: i.id })}
+                    onClick={() => deleteM({ id: i.id ?? ""})}
                   >
                     {deleteL ? (
                       <CircularProgress
