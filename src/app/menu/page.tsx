@@ -2,6 +2,9 @@
 import { useEffect, useState } from "react";
 import Layout from "../_components/app/Layout";
 import { Avatar } from "@nextui-org/react";
+import { useSearchParams } from "next/navigation";
+import { api } from "@/trpc/react";
+import { type Dishes } from "../../server/api/routers/user";
 
 const arr = [
   { item: "tea" },
@@ -27,14 +30,30 @@ const arr = [
 ];
 
 export default function Menu() {
-  const [selected, setSelected] = useState(0);
-  const [isSelectedDish, setIsSelectedDish] = useState<number[]>([]);
+  const [selected, setSelected] = useState("");
+  const [isSelectedDish, setIsSelectedDish] = useState<string[]>([]);
 
-  const handleSelect = (index: number) => {
-    if (!isSelectedDish.includes(index)) {
-      setIsSelectedDish((prev) => [...prev, index]);
+  const searchPram = useSearchParams();
+  const id = searchPram.get("id") || "";
+
+  const { data, isSuccess } = api.user.getCategorys.useQuery({ id: id });
+
+  const { data: dishData, isSuccess: dishSuccess } =
+    api.user.getDishes.useQuery({
+      id: selected,
+    });
+
+  useEffect(() => {
+    if (data && data.categorys[0] !== undefined) {
+      setSelected(data?.categorys[0]?.id);
+    }
+  }, [isSuccess]);
+
+  const handleSelect = (id: string) => {
+    if (!isSelectedDish.includes(id)) {
+      setIsSelectedDish((prev) => [...prev, id]);
     } else {
-      const arr = isSelectedDish.filter((i) => i !== index);
+      const arr = isSelectedDish.filter((i) => i !== id);
       setIsSelectedDish(arr);
     }
   };
@@ -44,13 +63,13 @@ export default function Menu() {
       <div className="w-full py-8 dark:text-white">
         <div className="flex items-center justify-center gap-6">
           <Breadcrumbs>
-            {arr.map((i, index) => (
+            {data?.categorys.map((i, index) => (
               <BrItems
                 key={index}
-                item={i.item}
-                isVisble={index === arr.length - 1 ? false : true}
-                isSelected={selected === index ? true : false}
-                onClick={() => setSelected(index)}
+                item={i.name}
+                isVisble={index === data.categorys.length - 1 ? false : true}
+                isSelected={selected === i.id ? true : false}
+                onClick={() => setSelected(i.id)}
               />
             ))}
           </Breadcrumbs>
@@ -61,21 +80,22 @@ export default function Menu() {
       </div>
 
       <div className="flex h-full w-full flex-col items-center justify-start gap-2 overflow-x-scroll px-2 pb-6">
-        {arr.map((i, index) => (
-          <div
-            className="glass-sm-sh flex w-full items-center justify-between rounded-lg p-3"
-            key={index}
-          >
-            <div className="flex items-center justify-center gap-4">
-              <Avatar size="sm" />
-              <h1>{i.item}</h1>
+        {dishData &&
+          dishData.map((i, index) => (
+            <div
+              className="glass-sm-sh flex w-full items-center justify-between rounded-lg p-3"
+              key={index}
+            >
+              <div className="flex items-center justify-center gap-4">
+                <Avatar size="sm" src={i.image} />
+                <h1>{i.name}</h1>
+              </div>
+              <Heart
+                isSelected={isSelectedDish.includes(i.id) ? true : false}
+                onClick={() => handleSelect(i.id)}
+              />
             </div>
-            <Heart
-              isSelected={isSelectedDish.includes(index) ? true : false}
-              onClick={() => handleSelect(index)}
-            />
-          </div>
-        ))}
+          ))}
       </div>
     </Layout>
   );

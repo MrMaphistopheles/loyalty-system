@@ -25,6 +25,14 @@ type THEME = {
   createdAt: Date;
 }[];
 
+export type Dishes = {
+  id: string;
+  name: string;
+  price: number | null;
+  categorysId: string | null;
+  image: string | undefined;
+};
+
 export type UserPasses = {
   bonusSystem: BonusSystem;
   Theme: THEME;
@@ -125,5 +133,49 @@ export const userRouter = createTRPCRouter({
           },
         },
       });
+    }),
+  getCategorys: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          menu: true,
+        },
+      });
+      return await ctx.db.menu.findUnique({
+        where: {
+          id: user?.menu[0]?.id,
+        },
+        include: {
+          categorys: true,
+        },
+      });
+    }),
+  getDishes: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const dish = await ctx.db.dish.findMany({
+        where: {
+          categorysId: input.id,
+        },
+        include: {
+          images: true,
+        },
+      });
+
+      let dishes: Dishes[] = [];
+      dish.forEach((e) => {
+        dishes.push({
+          id: e.id,
+          name: e.name,
+          price: e.price,
+          categorysId: e.categorysId,
+          image: e.images[0]?.path,
+        });
+      });
+      return dishes;
     }),
 });
