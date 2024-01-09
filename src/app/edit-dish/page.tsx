@@ -63,8 +63,8 @@ export default function EditDish() {
 
   useEffect(() => {
     if (document) {
-      const width = document.body.clientWidth;
-      setwidth(width);
+      const heigth = document.body.clientHeight;
+      setwidth(heigth / 2.2);
     }
   }, []);
 
@@ -77,7 +77,7 @@ export default function EditDish() {
       new FileTypeValidator(["jpeg", "png"]),
       new FileSizeValidator({ maxFileSize: 50 * 1024 * 1024 /* 50 MB */ }),
       new ImageDimensionsValidator({
-        maxHeight: 1600, // in pixels
+        maxHeight: 999, // in pixels
         maxWidth: 2600,
       }),
     ],
@@ -96,7 +96,8 @@ export default function EditDish() {
           onClick={openFilePicker}
           src={image}
           alt="Dish Image"
-          width={width}
+          //width={width}
+          className='max-h-[15em] max-w-[22rem]'
         />
       ) : (
         <div
@@ -162,7 +163,7 @@ export default function EditDish() {
           <Textarea
             variant="bordered"
             label="Опис"
-            size="lg"
+            size="sm"
             defaultValue={data?.description ?? ""}
             onChange={(e) => setDescription(e.target.value)}
           ></Textarea>

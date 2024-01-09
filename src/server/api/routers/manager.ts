@@ -6,7 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { uploadImage } from "@/server/func/uploadImage";
+import { deleteImageFromBucket, uploadImage } from "@/server/func/uploadImage";
 
 export type Created =
   | {
@@ -288,6 +288,21 @@ export const managerRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const findImage = await ctx.db.images.findFirst({
+        where: {
+          dishId: input.id,
+        },
+      });
+      await deleteImageFromBucket(
+        findImage?.path !== undefined ? findImage.path : "",
+      );
+
+      const deleteImage = await ctx.db.images.deleteMany({
+        where: {
+          dishId: input.id,
+        },
+      });
+
       const path = await uploadImage(input.image, input.imageName);
 
       return await ctx.db.dish.update({

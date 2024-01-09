@@ -1,6 +1,6 @@
 import { Storage, UploadOptions } from "@google-cloud/storage";
 import { v4 as uuidv4 } from "uuid";
-import { Buffer } from 'buffer';
+import { Buffer } from "buffer";
 
 interface Credentials {
   type: string;
@@ -55,15 +55,17 @@ const uploadToBucket = async (
     credentials,
   });
   const file = storage.bucket(bucketname).file(fileName);
-  const base64encodedString: string = data.replace(/^data:image\/\w+;base64,/, "");
-  const buffer= Buffer.from(base64encodedString, "base64");
+  const base64encodedString: string = data.replace(
+    /^data:image\/\w+;base64,/,
+    "",
+  );
+  const buffer = Buffer.from(base64encodedString, "base64");
   const upload = await file.save(buffer, options);
-  console.log(upload);
 };
 
 export async function uploadImage(data: string, name: string) {
   const fileName = `${uuidv4()}.${name}`;
-  await uploadToBucket(
+  const up = await uploadToBucket(
     data,
     fileName,
     "bonuslite1",
@@ -72,4 +74,26 @@ export async function uploadImage(data: string, name: string) {
   );
   const path: string = `https://storage.googleapis.com/bonuslite1/${fileName}`;
   return path;
+}
+
+async function deleteImage(
+  credentials: Credentials,
+  bucketname: string,
+  fileName: string,
+) {
+  const storage = new Storage({
+    credentials,
+  });
+  const parts = fileName.split("/");
+  console.log(parts);
+
+  const filename = parts[parts.length - 1];
+  if (filename !== undefined) {
+    const file = await storage.bucket(bucketname).file(filename).delete();
+    console.log(file);
+  }
+}
+
+export async function deleteImageFromBucket(filePath: string) {
+  await deleteImage(cr, "bonuslite1", filePath);
 }
