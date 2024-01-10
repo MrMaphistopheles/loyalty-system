@@ -16,7 +16,7 @@ export const waiterRouter = createTRPCRouter({
           },
         });
 
-        const rate = await ctx.db.Rate.create({
+        const rate = await ctx.db.rate.create({
           data: {
             customarId: input.clientId,
             waiterId: ctx.session.user.id,
