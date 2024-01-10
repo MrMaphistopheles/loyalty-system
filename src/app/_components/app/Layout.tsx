@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+
 export default function Layout({
   children,
   customW,
@@ -74,7 +75,7 @@ export default function Layout({
         ) : null}
 
         <motion.div
-          className={`dark:text-white flex h-full w-full flex-col items-center justify-center gap-${gap}`}
+          className={`flex h-full w-full flex-col items-center justify-center dark:text-white gap-${gap} px-2`}
           style={{
             maxWidth: `${width}rem`,
           }}
@@ -237,3 +238,4 @@ function MenuForUser() {
     </div>
   );
 }
+

@@ -31,6 +31,7 @@ export type Dishes = {
   price: number | null;
   categorysId: string | null;
   image: string | undefined;
+  description: string | undefined;
 };
 
 export type UserPasses = {
@@ -173,6 +174,7 @@ export const userRouter = createTRPCRouter({
           name: e.name,
           price: e.price,
           categorysId: e.categorysId,
+          description: e.description?.toString("utf-8"),
           image: e.images[0]?.path,
         });
       });

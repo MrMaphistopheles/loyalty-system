@@ -1,37 +1,26 @@
 "use client";
 import { useEffect, useState } from "react";
 import Layout from "../_components/app/Layout";
-import { Avatar } from "@nextui-org/react";
+import { Avatar, Image } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/trpc/react";
 import { type Dishes } from "../../server/api/routers/user";
-
-const arr = [
-  { item: "tea" },
-  { item: "tea" },
-  { item: "coffee" },
-  { item: "tea" },
-  { item: "tea" },
-  { item: "tea" },
-  { item: "coffee" },
-  { item: "tea" },
-  { item: "tea" },
-  { item: "tea" },
-  { item: "coffee" },
-  { item: "tea" },
-  { item: "tea" },
-  { item: "tea" },
-  { item: "coffee" },
-  { item: "tea" },
-  { item: "tea" },
-  { item: "tea" },
-  { item: "coffee" },
-  { item: "tea" },
-];
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@nextui-org/react";
 
 export default function Menu() {
   const [selected, setSelected] = useState("");
   const [isSelectedDish, setIsSelectedDish] = useState<string[]>([]);
+  const [show, setShow] = useState("");
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const searchPram = useSearchParams();
   const id = searchPram.get("id") || "";
@@ -56,6 +45,11 @@ export default function Menu() {
       const arr = isSelectedDish.filter((i) => i !== id);
       setIsSelectedDish(arr);
     }
+  };
+
+  const handleModal = (id: string) => {
+    setShow(id);
+    onOpen();
   };
 
   return (
@@ -88,7 +82,7 @@ export default function Menu() {
             >
               <div className="flex items-center justify-center gap-4">
                 <Avatar size="sm" src={i.image} />
-                <h1>{i.name}</h1>
+                <h1 onClick={() => handleModal(i.id)}>{i.name}</h1>
               </div>
               <Heart
                 isSelected={isSelectedDish.includes(i.id) ? true : false}
@@ -97,6 +91,13 @@ export default function Menu() {
             </div>
           ))}
       </div>
+      <ModalFor
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onOpenChange={onOpenChange}
+        data={dishData}
+        id={show}
+      />
     </Layout>
   );
 }
@@ -177,5 +178,54 @@ function Heart({
     >
       <path d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
     </svg>
+  );
+}
+
+function ModalFor({
+  isOpen,
+  onOpen,
+  onOpenChange,
+  data,
+  id,
+}: {
+  isOpen: boolean;
+  onOpen: () => void;
+  onOpenChange: () => void;
+  data?: Dishes[] | undefined;
+  id?: string;
+}) {
+  console.log(id);
+
+  let dishData: Dishes[] = [];
+  if (data !== undefined) {
+    dishData = data?.filter((i) => i.id === id);
+  }
+
+  return (
+    <Modal isOpen={isOpen} placement="bottom" onOpenChange={onOpenChange}>
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              {dishData[0]?.name}
+            </ModalHeader>
+
+            <ModalBody>
+              <Image src={dishData[0]?.image} className="w-full" />
+              <p>{dishData[0]?.description}</p>
+              <div className="flex items-center justify-between">
+                <p>Ціна</p>
+                <p>{dishData[0]?.price} ₴</p>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="light" onPress={onClose}>
+                Close
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   );
 }

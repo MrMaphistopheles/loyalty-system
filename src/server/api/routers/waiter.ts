@@ -15,6 +15,15 @@ export const waiterRouter = createTRPCRouter({
             bonusAcc: true,
           },
         });
+
+        const rate = await ctx.db.Rate.create({
+          data: {
+            customarId: input.clientId,
+            waiterId: ctx.session.user.id,
+          },
+        });
+        console.log(rate);
+
         const waiter = await ctx.db.user.findUnique({
           where: {
             id: ctx.session.user.id,
@@ -61,7 +70,7 @@ export const waiterRouter = createTRPCRouter({
               },
             });
             //console.log(history);
-            
+
             status = 200;
           } else if (balance < giftFor) {
             const bonusAcc = await ctx.db.bonusAcc.update({
@@ -82,7 +91,6 @@ export const waiterRouter = createTRPCRouter({
             status = 201;
           }
         }
-
         return { status: status };
       } catch (error) {
         return error;

@@ -64,6 +64,7 @@ model User {
     created   User[]  @relation(name: "ADMIN")
     Theme     Theme[]
     menu      menu[]
+    rate      Rate[]
 }
 
 model VerificationToken {
@@ -100,6 +101,15 @@ model purchaseHistory {
     user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
     bonusAcc   bonusAcc? @relation(fields: [bonusAccId], references: [id])
     bonusAccId String?
+}
+
+model Rate {
+    id          String  @id @default(cuid())
+    stars       Int     @default(0)
+    description Bytes?
+    customarId  String
+    User        User?   @relation(fields: [waiterId], references: [id])
+    waiterId    String?
 }
 
 model Theme {
