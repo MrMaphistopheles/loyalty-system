@@ -211,7 +211,14 @@ function ModalFor({
             </ModalHeader>
 
             <ModalBody>
-              <Image src={dishData[0]?.image} className="w-full" />
+              <div className="flex w-full items-center justify-center">
+                <Image
+                  src={dishData[0]?.image}
+                  width={400}
+                  className="w-full"
+                />
+              </div>
+
               <p>{dishData[0]?.description}</p>
               <div className="flex items-center justify-between">
                 <p>Ціна</p>
