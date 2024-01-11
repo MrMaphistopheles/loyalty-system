@@ -3,43 +3,92 @@
 import { useSearchParams } from "next/navigation";
 import Layout from "../_components/app/Layout";
 import { api } from "@/trpc/react";
-import { Avatar, Textarea } from "@nextui-org/react";
-import { useState } from "react";
+import { Avatar, Button, Textarea } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 const items = [...Array(6).keys()].slice(1);
 
 export default function Rate() {
   const searchPram = useSearchParams();
   const id = searchPram.get("id") ?? "";
+  const router = useRouter();
   const [show, setShow] = useState(0);
+  const [description, setDescription] = useState("");
 
-  const { data } = api.user.getRateInfo.useQuery({ id: id });
+  const { data, isSuccess } = api.user.getRateInfo.useQuery({
+    id: id,
+  });
+
+  useEffect(() => {
+    if (data && data[0]?.stars && data[0].description) {
+      setShow(data[0].stars);
+      setDescription(data[0].description);
+    }
+  }, [isSuccess]);
+
+  const { mutate, isLoading } = api.user.updateRate.useMutation({
+    onSuccess: () => {
+      if (data && data) {
+        router.push(`/tips?id=${data[0]?.waiterId}&rateid=${id}`);
+      }
+    },
+  });
 
   return (
-    <Layout isVisible={false} gap={3}>
+    <Layout isVisible={false} gap={12}>
       {data &&
         data.map((i) => (
-          <>
-            <Avatar src={i?.image ?? ""} className="h-28 w-28" />
-            <h1>{i.name}</h1>
-            <div className="flex gap-1">
-              {items.map((i) => (
-                <div key={i} onClick={() => setShow(i)}>
-                  <svg
-                    className={`h-9 w-9 ${
-                      show >= i ? "text-yellow-400" : "text-white"
-                    }`}
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    viewBox="0 0 22 20"
-                  >
-                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                  </svg>
-                </div>
-              ))}
+          <React.Fragment key={i.id}>
+            <div className="flex w-full flex-col items-center justify-center gap-8">
+              <Avatar src={i?.image ?? ""} className="h-28 w-28" />
+
+              <h1 className="w-8/12 text-center text-lg">
+                На скільки ви готові рекомендувати {i.name}?
+              </h1>
             </div>
-            <Textarea variant="bordered"></Textarea>
-          </>
+
+            <div className="flex w-full flex-col items-center justify-center gap-4">
+              <div className="flex gap-1">
+                {items.map((i) => (
+                  <div key={i} onClick={() => setShow(i)}>
+                    <svg
+                      className={`h-14 w-14 ${
+                        show >= i ? "text-yellow-400" : "text-white"
+                      }`}
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                  </div>
+                ))}
+              </div>
+              <Textarea
+                variant="bordered"
+                size="lg"
+                label="Відгук"
+                onChange={(e) => setDescription(e.target.value)}
+                defaultValue={data[0]?.description}
+                className="w-11/12"
+              ></Textarea>
+              <Button
+                isLoading={isLoading}
+                onClick={() =>
+                  mutate({
+                    id: i.id ?? "",
+                    stars: show,
+                    description: description,
+                  })
+                }
+                size="lg"
+                className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
+              >
+                {isLoading ? "Loading..." : " Оцінити"}
+              </Button>
+            </div>
+          </React.Fragment>
         ))}
     </Layout>
   );

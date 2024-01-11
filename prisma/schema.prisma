@@ -104,12 +104,14 @@ model purchaseHistory {
 }
 
 model Rate {
-    id          String  @id @default(cuid())
-    stars       Int     @default(0)
+    id          String   @id @default(cuid())
+    stars       Int      @default(0)
     description Bytes?
     customarId  String
-    User        User?   @relation(fields: [waiterId], references: [id])
+    User        User?    @relation(fields: [waiterId], references: [id])
     waiterId    String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }
 
 model Theme {

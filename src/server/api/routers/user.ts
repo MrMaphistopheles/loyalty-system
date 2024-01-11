@@ -250,8 +250,31 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      let data = [{ ...rate, name: waiter?.name, image: waiter?.image }];
+      let data = [
+        {
+          ...rate,
+          description: rate?.description?.toString("utf-8"),
+          name: waiter?.name,
+          image: waiter?.image,
+        },
+      ];
 
       return data;
+    }),
+  updateRate: protectedProcedure
+    .input(
+      z.object({ id: z.string(), stars: z.number(), description: z.string() }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const res = await ctx.db.rate.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          stars: input.stars,
+          description: Buffer.from(input.description, "utf-8"),
+        },
+      });
+      return { ...res, description: res.description?.toString("utf-8") };
     }),
 });
