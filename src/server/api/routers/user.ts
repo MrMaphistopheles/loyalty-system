@@ -47,6 +47,14 @@ export type UserPasses = {
   role: UserRole;
 };
 
+export type Res = {
+  id: string;
+  stars: number;
+  description: string | undefined;
+  customarId: string;
+  waiterId: string | null;
+};
+
 export const userRouter = createTRPCRouter({
   getUserData: protectedProcedure.query(async ({ ctx }) => {
     const user = await ctx.db.user.findUnique({
@@ -183,11 +191,24 @@ export const userRouter = createTRPCRouter({
     }),
 
   getRates: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.rate.findMany({
+    const res = await ctx.db.rate.findMany({
       where: {
         customarId: ctx.session.user.id,
       },
     });
+
+    let data: Res[] = [];
+    res.forEach((e) => {
+      data.push({
+        id: e.id,
+        stars: e.stars,
+        description: e.description?.toString("utf-8"),
+        customarId: e.customarId,
+        waiterId: e.waiterId,
+      });
+    });
+
+    return data;
   }),
 
   getRatesInfo: protectedProcedure.query(async ({ ctx }) => {
@@ -229,7 +250,11 @@ export const userRouter = createTRPCRouter({
     const data = rates.map((i) => {
       const match = modified.find((e) => e.wId === i.waiterId);
       if (match) {
-        return { ...i, ...match };
+        return {
+          ...i,
+          description: i.description?.toString("utf-8"),
+          ...match,
+        };
       }
     });
     return data;

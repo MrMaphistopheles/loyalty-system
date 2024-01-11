@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@nextui-org/react";
 import { UserRole } from "@prisma/client";
 import { api } from "@/trpc/react";
+import { type Res } from '../../../server/api/routers/user';
 
 export default function Layout({
   children,
@@ -244,8 +245,11 @@ function MenuForUser() {
 }
 
 function Messages({ role }: { role: UserRole | null }) {
+
   const { data, isLoading } = api.user.getRates.useQuery();
   console.log(data);
+
+  
 
   if (role === "USER") {
     if (isLoading) {
