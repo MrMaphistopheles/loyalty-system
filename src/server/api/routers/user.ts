@@ -321,7 +321,7 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const paymentDetailsObj = {
         orderId: uuidv4(),
-        orderDesc: `Tip for ${input.waiterName}`,
+        orderDesc: `Чайові для ${input.waiterName}`,
         amount: input.amount,
         email: ctx.session.user.email,
       };

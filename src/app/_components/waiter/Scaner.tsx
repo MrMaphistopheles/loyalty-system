@@ -18,7 +18,7 @@ export default function Scaner() {
   };
 
   if (isLoading) {
-    return <Loading />;
+    return <Loading color="stroke-blue-500" />;
   }
   if (isError) {
     return <div>server error</div>;
@@ -192,14 +192,18 @@ function Counted() {
   );
 }
 
-function Loading() {
+export function Loading({
+  color,
+}: {
+  color?: "stroke-blue-500" | "stroke-black" | "stroke-white";
+}) {
   return (
     <div className="flex items-center justify-center">
       <CircularProgress
         classNames={{
           svg: "w-14 h-14",
-          indicator: "stroke-blue-500",
-          track: "stroke-blue-500/10",
+          indicator: `${color}`,
+          track: `${color}/10`,
         }}
       />
     </div>
