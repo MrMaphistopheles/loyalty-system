@@ -31,7 +31,7 @@ export async function Payment({
     merchant_id: "1539840",
     sender_email: email,
     lang: "uk",
-
+    response_url: "https://lite-theta.vercel.app/fondy-response"
   };
 
   const url = "https://pay.fondy.eu/api/checkout/url/";
