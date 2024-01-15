@@ -31,14 +31,28 @@ export async function Payment({
     merchant_id: "1539840",
     sender_email: email,
     lang: "uk",
+    merchant_data: {
+
+    }
   };
 
   const url = "https://pay.fondy.eu/api/checkout/url/";
 
-  const signatureString = `${paymentKey}|${reqData.amount}|${reqData.currency}|${reqData.merchant_id}|${reqData.order_desc}|${reqData.order_id}`;
+  const sortedKeys: string[] = Object.keys(reqData).sort((a, b) => {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  });
+
+  const joinedString = sortedKeys
+    .map((i) => reqData[i as keyof typeof reqData])
+    .join("|");
+  console.log(joinedString);
+
+  const signatureStringN = `${paymentKey}|${joinedString}`;
 
   let shasum = crypto.createHash("sha1");
-  shasum.update(signatureString);
+  shasum.update(signatureStringN);
   const signature = shasum.digest("hex");
 
   const { data } = await axios.post<ApiData>(url, {
