@@ -319,6 +319,7 @@ export const userRouter = createTRPCRouter({
         orderId: uuidv4(),
         orderDesc: `Tip for ${input.waiterName}`,
         amount: input.amount,
+        email: ctx.session.user.email,
       };
 
       const { checkout_url, payment_id, response_status } =

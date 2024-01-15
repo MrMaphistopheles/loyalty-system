@@ -15,10 +15,12 @@ export async function Payment({
   orderId,
   orderDesc,
   amount,
+  email,
 }: {
   orderId: string;
   orderDesc: string;
   amount: number;
+  email: string | null | undefined;
 }) {
   const paymentKey = "PhdrLInCK7Ayl4F6Kdt6GsfFDvWdifsU";
   const reqData = {
@@ -27,6 +29,8 @@ export async function Payment({
     currency: "UAH",
     amount: `${amount}`,
     merchant_id: "1539840",
+    sender_email: email,
+    lang: "uk",
   };
 
   const url = "https://pay.fondy.eu/api/checkout/url/";
