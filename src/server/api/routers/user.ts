@@ -2,7 +2,8 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { UserRole } from "@prisma/client";
-import Image from "next/image";
+import { Payment } from "@/server/func/paymant";
+import { v4 as uuidv4, v4 } from "uuid";
 
 type Data = {
   id: string | null;
@@ -301,5 +302,41 @@ export const userRouter = createTRPCRouter({
         },
       });
       return { ...res, description: res.description?.toString("utf-8") };
+    }),
+
+  payment: protectedProcedure
+    .input(
+      z.object({
+        rateId: z.string(),
+        waiterId: z.string(),
+        customarId: z.string().optional(),
+        amount: z.number(),
+        waiterName: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const paymentDetailsObj = {
+        orderId: uuidv4(),
+        orderDesc: `Tip for ${input.waiterName}`,
+        amount: input.amount,
+      };
+
+      const { checkout_url, payment_id, response_status } =
+        await Payment(paymentDetailsObj);
+
+      const tipDetails = await ctx.db.tips.create({
+        data: {
+          orderId: paymentDetailsObj.orderId,
+          orderDesc: paymentDetailsObj.orderDesc,
+          amount: input.amount,
+          payment_id: payment_id,
+          customarId: ctx.session.user.id,
+          rateId: input.rateId,
+          userId: input.waiterId,
+        },
+      });
+      console.log(tipDetails);
+
+      return { redirectUrl: checkout_url };
     }),
 });

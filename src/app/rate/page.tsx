@@ -3,15 +3,23 @@
 import { useSearchParams } from "next/navigation";
 import Layout from "../_components/app/Layout";
 import { api } from "@/trpc/react";
-import { Avatar, Button, Textarea } from "@nextui-org/react";
+import {
+  Avatar,
+  Button,
+  ButtonGroup,
+  Input,
+  Textarea,
+} from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 const items = [...Array(6).keys()].slice(1);
 
 export default function Rate() {
   const searchPram = useSearchParams();
   const id = searchPram.get("id") ?? "";
-  const router = useRouter();
+  const [isTip, setIsTip] = useState(false);
+
   const [show, setShow] = useState(0);
   const [description, setDescription] = useState("");
 
@@ -26,20 +34,22 @@ export default function Rate() {
     }
   }, [isSuccess]);
 
-  const { mutate, isLoading } = api.user.updateRate.useMutation({
+  const {
+    mutate,
+    isLoading,
+    isSuccess: mSuccess,
+  } = api.user.updateRate.useMutation({
     onSuccess: () => {
-      if (data && data) {
-        router.push(`/tips?id=${data[0]?.waiterId}&rateid=${id}`);
-      }
+      setIsTip(true);
     },
   });
 
   return (
-    <Layout isVisible={false} gap={12}>
+    <Layout isVisible={false} gap={8}>
       {data &&
         data.map((i) => (
           <React.Fragment key={i.id}>
-            <div className="flex w-full flex-col items-center justify-center gap-8">
+            <div className="flex w-full flex-col items-center justify-center gap-4">
               <Avatar src={i?.image ?? ""} className="h-28 w-28" />
 
               <h1 className="w-8/12 text-center text-lg">
@@ -47,7 +57,7 @@ export default function Rate() {
               </h1>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-center gap-4">
+            <div className="flex w-full flex-col items-center justify-center gap-8">
               <div className="flex gap-1">
                 {items.map((i) => (
                   <div key={i} onClick={() => setShow(i)}>
@@ -65,31 +75,146 @@ export default function Rate() {
                   </div>
                 ))}
               </div>
-              <Textarea
-                variant="bordered"
-                size="lg"
-                label="Відгук"
-                onChange={(e) => setDescription(e.target.value)}
-                defaultValue={data[0]?.description}
-                className="w-11/12"
-              ></Textarea>
-              <Button
-                isLoading={isLoading}
-                onClick={() =>
-                  mutate({
-                    id: i.id ?? "",
-                    stars: show,
-                    description: description,
-                  })
-                }
-                size="lg"
-                className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
-              >
-                {isLoading ? "Loading..." : " Оцінити"}
-              </Button>
+
+              {isTip ? (
+                <Tips
+                  rateId={data[0]?.id}
+                  customarId={data[0]?.customarId}
+                  waiterId={data[0]?.waiterId}
+                  waiterName={data[0]?.name}
+                />
+              ) : (
+                <>
+                  <Textarea
+                    variant="bordered"
+                    size="lg"
+                    label="Відгук"
+                    onChange={(e) => setDescription(e.target.value)}
+                    defaultValue={data[0]?.description}
+                    className="w-11/12"
+                  ></Textarea>
+                  <Button
+                    isLoading={isLoading}
+                    onClick={() =>
+                      mutate({
+                        id: i.id ?? "",
+                        stars: show,
+                        description: description,
+                      })
+                    }
+                    size="lg"
+                    className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
+                  >
+                    {isLoading ? "Loading..." : " Оцінити"}
+                  </Button>
+                </>
+              )}
             </div>
           </React.Fragment>
         ))}
     </Layout>
+  );
+}
+
+function Tips({
+  rateId,
+  customarId,
+  waiterId,
+  waiterName,
+}: {
+  rateId: string | undefined;
+  customarId: string | undefined;
+  waiterId: string | undefined | null;
+  waiterName: string | undefined | null;
+}) {
+  const tipsAmount = [
+    { option: 10, val: 1000, currency: "uah" },
+    { option: 20, val: 2000, currency: "uah" },
+    { option: 30, val: 3000, currency: "uah" },
+    { option: "custom" },
+  ];
+
+  const router = useRouter();
+
+  const [isSelect, setIsSelect] = useState<number | string>();
+  const [sum, setSum] = useState<number>();
+  const [custom, setCustom] = useState(false);
+
+  useEffect(() => {
+    const amount = tipsAmount.filter((i) => i.option === isSelect);
+    if (amount[0]?.option !== "custom") {
+      setSum(amount[0]?.val);
+    } else {
+      setCustom(true);
+    }
+  }, [isSelect]);
+
+  const { mutate, isLoading, data, isSuccess } = api.user.payment.useMutation();
+
+  useEffect(() => {
+    if (data) {
+      router.push(data?.redirectUrl);
+    }
+  }, [isSuccess]);
+
+  const handleMutation = () => {
+    if (rateId && waiterId && waiterName) {
+      let amount = sum || 0;
+      mutate({
+        rateId: rateId,
+        waiterId: waiterId,
+        amount: amount,
+        waiterName: waiterName,
+      });
+    }
+  };
+
+  return (
+    <motion.div
+      className="flex w-full flex-col items-center justify-center gap-4"
+      initial={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="flex w-full items-center justify-center gap-2">
+        {custom ? (
+          <Input
+            label="Ваша сума"
+            size="sm"
+            type="number"
+            variant="bordered"
+            className="w-2/3"
+            onChange={(e) => setSum(parseInt(e.target.value) * 100)}
+          />
+        ) : (
+          <ButtonGroup size="md">
+            {tipsAmount.map((i) => (
+              <Button
+                key={i.option}
+                variant="solid"
+                onClick={() => setIsSelect(i.option)}
+                //size="lg"
+                className={`h-[3.2rem] ${
+                  isSelect === i.option
+                    ? `bg-black text-white`
+                    : `bg-white text-black`
+                }`}
+              >
+                {i.option} {i.currency}
+              </Button>
+            ))}
+          </ButtonGroup>
+        )}
+      </div>
+      <Button
+        size="lg"
+        className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
+        isLoading={isLoading}
+        onClick={handleMutation}
+      >
+        Надіслати
+      </Button>
+    </motion.div>
   );
 }
