@@ -31,9 +31,7 @@ export async function Payment({
     merchant_id: "1539840",
     sender_email: email,
     lang: "uk",
-    merchant_data: {
 
-    }
   };
 
   const url = "https://pay.fondy.eu/api/checkout/url/";
