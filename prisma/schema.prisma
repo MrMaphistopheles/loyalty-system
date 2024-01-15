@@ -161,15 +161,16 @@ model images {
 }
 
 model tips {
-    id         String   @id @default(cuid())
-    orderId    String
-    orderDesc  String
-    amount     Int
-    payment_id String
-    customarId String
-    rateId     String
-    createdAt  DateTime @default(now())
+    id          String   @id @default(cuid())
+    orderId     String   @unique
+    orderDesc   String
+    amount      Int
+    payment_id  String
+    customarId  String
+    rateId      String
+    createdAt   DateTime @default(now())
+    orderStatus String
     // waiter connections 
-    User       User?    @relation(fields: [userId], references: [id])
-    userId     String?
+    User        User?    @relation(fields: [userId], references: [id])
+    userId      String?
 }

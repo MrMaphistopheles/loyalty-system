@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { UserRole } from "@prisma/client";
 import { Payment } from "@/server/func/paymant";
 import { v4 as uuidv4, v4 } from "uuid";
@@ -334,10 +338,29 @@ export const userRouter = createTRPCRouter({
           customarId: ctx.session.user.id,
           rateId: input.rateId,
           userId: input.waiterId,
+          orderStatus: "in process",
         },
       });
       console.log(tipDetails);
 
       return { redirectUrl: checkout_url };
+    }),
+
+  updatePaymentDetails: publicProcedure
+    .input(
+      z.object({
+        orderId: z.string(),
+        orderStatus: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.tips.update({
+        where: {
+          orderId: input.orderId,
+        },
+        data: {
+          orderStatus: input.orderStatus,
+        },
+      });
     }),
 });
