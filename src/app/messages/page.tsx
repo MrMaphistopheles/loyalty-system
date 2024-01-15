@@ -7,7 +7,10 @@ import Layout from "../_components/app/Layout";
 import Link from "next/link";
 
 export default function Messages() {
-  const { data } = api.user.getRatesInfo.useQuery();
+  const { data: idata } = api.user.getRatesInfo.useQuery();
+  const  data = [...idata ?? []].reverse()
+
+  
 
   return (
     <Layout isVisible={false} customW={27}>

@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@nextui-org/react";
 import { UserRole } from "@prisma/client";
 import { api } from "@/trpc/react";
-import { type Res } from '../../../server/api/routers/user';
+import { type Res } from "../../../server/api/routers/user";
 
 export default function Layout({
   children,
@@ -245,11 +245,8 @@ function MenuForUser() {
 }
 
 function Messages({ role }: { role: UserRole | null }) {
-
   const { data, isLoading } = api.user.getRates.useQuery();
-  console.log(data);
-
-  
+  const messageCount = data?.filter((i) => i.stars === 0);
 
   if (role === "USER") {
     if (isLoading) {
@@ -274,7 +271,11 @@ function Messages({ role }: { role: UserRole | null }) {
     }
     return (
       <Link href="/messages" className="px-4">
-        <Badge content={data?.length} color="primary" placement="top-left">
+        <Badge
+          content={messageCount?.length}
+          color="primary"
+          placement="top-left"
+        >
           <svg
             className="h-6 w-6 text-gray-800 dark:text-white"
             aria-hidden="true"
