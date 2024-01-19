@@ -56,7 +56,7 @@ export default function Rate() {
                 На скільки ви готові рекомендувати {i.name}?
               </h1>
             </div>
-
+            <br />
             <div className="flex w-full flex-col items-center justify-center gap-8">
               <div className="flex gap-1">
                 {items.map((i) => (
@@ -131,7 +131,6 @@ function Tips({
     { option: 10, val: 1000, currency: "uah" },
     { option: 20, val: 2000, currency: "uah" },
     { option: 30, val: 3000, currency: "uah" },
-    { option: "custom" },
   ];
 
   const router = useRouter();
@@ -142,10 +141,9 @@ function Tips({
 
   useEffect(() => {
     const amount = tipsAmount.filter((i) => i.option === isSelect);
-    if (amount[0]?.option !== "custom") {
+    if (amount[0]) {
       setSum(amount[0]?.val);
-    } else {
-      setCustom(true);
+      setCustom(false);
     }
   }, [isSelect]);
 
@@ -178,23 +176,13 @@ function Tips({
       exit={{ opacity: 0 }}
     >
       <div className="flex w-full items-center justify-center gap-2">
-        {custom ? (
-          <Input
-            label="Ваша сума"
-            size="sm"
-            type="number"
-            variant="bordered"
-            className="w-2/3"
-            onChange={(e) => setSum(parseInt(e.target.value) * 100)}
-          />
-        ) : (
+        <div className="rounded-xl bg-white">
           <ButtonGroup size="md">
             {tipsAmount.map((i) => (
               <Button
                 key={i.option}
                 variant="solid"
                 onClick={() => setIsSelect(i.option)}
-                //size="lg"
                 className={`h-[3.2rem] ${
                   isSelect === i.option
                     ? `bg-black text-white`
@@ -204,8 +192,28 @@ function Tips({
                 {i.option} {i.currency}
               </Button>
             ))}
+
+            {custom ? (
+              <>
+                <input
+                  id="custom"
+                  placeholder="сума"
+                  className="h-[2.5rem] w-[4.5rem] min-w-0 border-0 pl-3 focus:placeholder-transparent focus:outline-none"
+                  type="number"
+                  onChange={(e) => setSum(parseInt(e.target.value) * 100)}
+                />
+              </>
+            ) : (
+              <Button
+                variant="solid"
+                onClick={() => setCustom(true)}
+                className="h-[3.2rem] bg-white text-black"
+              >
+                custom
+              </Button>
+            )}
           </ButtonGroup>
-        )}
+        </div>
       </div>
       <Button
         size="lg"

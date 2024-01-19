@@ -20,8 +20,6 @@ type TransactionParams = Omit<
 
 export default function Fondy() {
   const searchPram = useSearchParams();
-  const orderId = searchPram.get("order_id") ?? "";
-  const orderStatus = searchPram.get("order_status") ?? "";
 
   let paramsObj: TransactionParams = {} as TransactionParams;
 
@@ -33,7 +31,7 @@ export default function Fondy() {
   const { mutate, isSuccess } = api.user.updatePaymentDetails.useMutation();
 
   useEffect(() => {
-    if (orderId && orderStatus) {
+    if (paramsObj) {
       mutate(paramsObj);
     }
   }, []);
