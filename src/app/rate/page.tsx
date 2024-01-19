@@ -150,13 +150,11 @@ function Tips({
 
   const [isSelect, setIsSelect] = useState<number | string>();
   const [sum, setSum] = useState<number>();
-  const [custom, setCustom] = useState(false);
 
   useEffect(() => {
     const amount = tipsAmount.filter((i) => i.option === isSelect);
     if (amount[0]) {
       setSum(amount[0]?.val);
-      setCustom(false);
     }
   }, [isSelect]);
 
@@ -215,7 +213,7 @@ function Tips({
       exit={{ opacity: 0 }}
     >
       <div className="flex w-full items-center justify-center gap-2">
-        <div className="rounded-xl bg-white">
+        <div className="rounded-2xl bg-white min-w-0 min-h-0">
           <ButtonGroup size="md">
             {tipsAmount.map((i) => (
               <Button
@@ -232,12 +230,12 @@ function Tips({
               </Button>
             ))}
 
-            {custom ? (
+            {isSelect === "custom" ? (
               <>
                 <input
                   id="custom"
                   placeholder="сума"
-                  className="h-[2.5rem] w-[4.5rem] min-w-0 border-0 pl-3 focus:placeholder-transparent focus:outline-none"
+                  className="mr-3 h-[2.5rem] w-[4.5rem] min-w-0 border-0 bg-white pl-3 text-black focus:placeholder-transparent focus:outline-none"
                   type="number"
                   onChange={(e) => setSum(parseInt(e.target.value) * 100)}
                 />
@@ -245,7 +243,7 @@ function Tips({
             ) : (
               <Button
                 variant="solid"
-                onClick={() => setCustom(true)}
+                onClick={() => setIsSelect("custom")}
                 className="h-[3.2rem] bg-white text-black"
               >
                 custom
