@@ -161,16 +161,61 @@ model images {
 }
 
 model tips {
-    id          String   @id @default(cuid())
-    orderId     String   @unique
+    id          String        @id @default(cuid())
+    orderId     String        @unique
     orderDesc   String
     amount      Int
     payment_id  String
     customarId  String
     rateId      String
-    createdAt   DateTime @default(now())
+    createdAt   DateTime      @default(now())
     orderStatus String
+    transaction Transaction[]
     // waiter connections 
-    User        User?    @relation(fields: [userId], references: [id])
+    User        User?         @relation(fields: [userId], references: [id])
     userId      String?
+}
+
+model Transaction {
+    id                        String  @id @default(cuid())
+    actual_amount             String
+    actual_currency           String
+    additional_info           Bytes
+    amount                    String
+    approval_code             String
+    card_bin                  String
+    card_type                 String
+    currency                  String
+    eci                       String
+    fee                       String
+    get_without_parameters    String
+    masked_card               String
+    merchant_data             String
+    merchant_id               String
+    order_id                  String
+    order_status              String
+    order_time                String
+    parent_order_id           String
+    payment_id                String
+    payment_system            String
+    product_id                String
+    rectoken                  String
+    rectoken_lifetime         String
+    response_code             String
+    response_description      String
+    response_signature_string Bytes
+    response_status           String
+    reversal_amount           String
+    rrn                       String
+    sender_account            String
+    sender_cell_phone         String
+    sender_email              String
+    settlement_amount         String
+    settlement_currency       String
+    settlement_date           String
+    signature                 String
+    tran_type                 String
+    verification_status       String
+    tips                      tips?   @relation(fields: [tipsId], references: [id])
+    tipsId                    String?
 }

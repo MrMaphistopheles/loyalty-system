@@ -60,6 +60,47 @@ export type Res = {
   waiterId: string | null;
 };
 
+const TransactionSchema = z.object({
+  actual_amount: z.string(),
+  actual_currency: z.string(),
+  additional_info: z.string(),
+  amount: z.string(),
+  approval_code: z.string(),
+  card_bin: z.string(),
+  card_type: z.string(),
+  currency: z.string(),
+  eci: z.string(),
+  fee: z.string(),
+  get_without_parameters: z.string(),
+  masked_card: z.string(),
+  merchant_data: z.string(),
+  merchant_id: z.string(),
+  order_id: z.string(),
+  order_status: z.string(),
+  order_time: z.string(),
+  parent_order_id: z.string(),
+  payment_id: z.string(),
+  payment_system: z.string(),
+  product_id: z.string(),
+  rectoken: z.string(),
+  rectoken_lifetime: z.string(),
+  response_code: z.string(),
+  response_description: z.string(),
+  response_signature_string: z.string(),
+  response_status: z.string(),
+  reversal_amount: z.string(),
+  rrn: z.string(),
+  sender_account: z.string(),
+  sender_cell_phone: z.string(),
+  sender_email: z.string(),
+  settlement_amount: z.string(),
+  settlement_currency: z.string(),
+  settlement_date: z.string(),
+  signature: z.string(),
+  tran_type: z.string(),
+  verification_status: z.string(),
+});
+
 export const userRouter = createTRPCRouter({
   getUserData: protectedProcedure.query(async ({ ctx }) => {
     const user = await ctx.db.user.findUnique({
@@ -347,19 +388,58 @@ export const userRouter = createTRPCRouter({
     }),
 
   updatePaymentDetails: publicProcedure
-    .input(
-      z.object({
-        orderId: z.string(),
-        orderStatus: z.string(),
-      }),
-    )
+    .input(TransactionSchema)
     .mutation(async ({ ctx, input }) => {
+      console.log(input);
+
       return await ctx.db.tips.update({
         where: {
-          orderId: input.orderId,
+          orderId: input.order_id,
         },
         data: {
-          orderStatus: input.orderStatus,
+          orderStatus: input.order_status,
+          transaction: {
+            create: {
+              actual_amount: input.actual_amount,
+              actual_currency: input.actual_currency,
+              additional_info: Buffer.from(input.additional_info, "utf-8"),
+              amount: input.amount,
+              approval_code: input.approval_code,
+              card_bin: input.card_bin,
+              card_type: input.card_type,
+              currency: input.currency,
+              eci: input.eci,
+              fee: input.fee,
+              get_without_parameters: input.get_without_parameters,
+              masked_card: input.masked_card,
+              merchant_data: input.merchant_data,
+              merchant_id: input.merchant_id,
+              order_id: input.order_id,
+              order_status: input.order_status,
+              order_time: input.order_time,
+              parent_order_id: input.parent_order_id,
+              payment_id: input.payment_id,
+              payment_system: input.payment_system,
+              product_id: input.product_id,
+              rectoken: input.rectoken,
+              rectoken_lifetime: input.rectoken_lifetime,
+              response_code: input.response_code,
+              response_description: input.response_description,
+              response_signature_string: Buffer.from(input.response_signature_string, "utf-8"),
+              response_status: input.response_status,
+              reversal_amount: input.reversal_amount,
+              rrn: input.rrn,
+              sender_account: input.sender_account,
+              sender_cell_phone: input.sender_cell_phone,
+              sender_email: input.sender_email,
+              settlement_amount: input.settlement_amount,
+              settlement_currency: input.settlement_currency,
+              settlement_date: input.settlement_date,
+              signature: input.signature,
+              tran_type: input.tran_type,
+              verification_status: input.verification_status,
+            },
+          },
         },
       });
     }),

@@ -5,20 +5,36 @@ import Layout from "../_components/app/Layout";
 import { api } from "@/trpc/react";
 import { useEffect } from "react";
 import { Loading } from "../_components/waiter/Scaner";
+import { type Transaction } from "@prisma/client";
+
+type TransactionObj = Omit<Transaction, "id">;
+type TransactionModifiedObj = Omit<TransactionObj, "additional_info">;
+
+type TransactionParams = Omit<
+  TransactionModifiedObj,
+  "response_signature_string"
+> & {
+  additional_info: string;
+  response_signature_string: string;
+};
 
 export default function Fondy() {
   const searchPram = useSearchParams();
   const orderId = searchPram.get("order_id") ?? "";
   const orderStatus = searchPram.get("order_status") ?? "";
 
+  let paramsObj: TransactionParams = {} as TransactionParams;
+
+  for (const [key, value] of searchPram) {
+    paramsObj[key as keyof TransactionParams] = value;
+  }
+  console.log(paramsObj);
+
   const { mutate, isSuccess } = api.user.updatePaymentDetails.useMutation();
 
   useEffect(() => {
     if (orderId && orderStatus) {
-      mutate({
-        orderId: orderId,
-        orderStatus: orderStatus,
-      });
+      mutate(paramsObj);
     }
   }, []);
 
