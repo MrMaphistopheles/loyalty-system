@@ -313,6 +313,9 @@ export const userRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          tips: true,
+        },
       });
 
       const waiter = await ctx.db.user.findUnique({
@@ -425,7 +428,10 @@ export const userRouter = createTRPCRouter({
               rectoken_lifetime: input.rectoken_lifetime,
               response_code: input.response_code,
               response_description: input.response_description,
-              response_signature_string: Buffer.from(input.response_signature_string, "utf-8"),
+              response_signature_string: Buffer.from(
+                input.response_signature_string,
+                "utf-8",
+              ),
               response_status: input.response_status,
               reversal_amount: input.reversal_amount,
               rrn: input.rrn,

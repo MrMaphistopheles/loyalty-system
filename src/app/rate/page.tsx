@@ -13,6 +13,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { SvgBird } from "../fondy-response/page";
 const items = [...Array(6).keys()].slice(1);
 
 export default function Rate() {
@@ -28,8 +29,10 @@ export default function Rate() {
   });
 
   useEffect(() => {
-    if (data && data[0]?.stars && data[0].description) {
+    if (data && data[0]?.stars) {
       setShow(data[0].stars);
+    }
+    if (data && data[0]?.description) {
       setDescription(data[0].description);
     }
   }, [isSuccess]);
@@ -82,6 +85,11 @@ export default function Rate() {
                   customarId={data[0]?.customarId}
                   waiterId={data[0]?.waiterId}
                   waiterName={data[0]?.name}
+                  status={
+                    data && data[0]?.tips
+                      ? data[0].tips[0]?.orderStatus
+                      : "none"
+                  }
                 />
               ) : (
                 <>
@@ -121,11 +129,13 @@ function Tips({
   customarId,
   waiterId,
   waiterName,
+  status,
 }: {
   rateId: string | undefined;
   customarId: string | undefined;
   waiterId: string | undefined | null;
   waiterName: string | undefined | null;
+  status: "approved" | "none" | string | undefined | null;
 }) {
   const tipsAmount = [
     { option: 10, val: 1000, currency: "uah" },
@@ -166,6 +176,32 @@ function Tips({
       });
     }
   };
+
+  console.log(status);
+
+  if (status === "approved") {
+    return (
+      <motion.div
+        className="flex w-full flex-col items-center justify-center gap-4"
+        initial={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <div className="h-6/12 flex w-full items-end justify-center gap-4">
+          <div className="w-1/3">
+            <SvgBird />
+          </div>
+
+          <div className="flex flex-col rounded-e-xl rounded-es-xl border-white bg-white p-4">
+            <p className="text-xl font-normal text-gray-900">
+              Дякуємо за чайові!
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
