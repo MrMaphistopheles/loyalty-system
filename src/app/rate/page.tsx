@@ -13,7 +13,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { SvgBird } from "../fondy-response/page";
+import { SvgBird } from "../_components/svg/SvgBird";
+
 const items = [...Array(6).keys()].slice(1);
 
 export default function Rate() {
@@ -46,6 +47,8 @@ export default function Rate() {
       setIsTip(true);
     },
   });
+
+  SvgBird;
 
   return (
     <Layout isVisible={false} gap={8}>
