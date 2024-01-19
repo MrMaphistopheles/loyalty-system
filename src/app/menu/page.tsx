@@ -67,9 +67,9 @@ export default function Menu() {
               />
             ))}
           </Breadcrumbs>
-          <div>
+{/*           <div>
             <Heart />
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -225,11 +225,7 @@ function ModalFor({
                 <p>{dishData[0]?.price} ₴</p>
               </div>
             </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Close
-              </Button>
-            </ModalFooter>
+            <ModalFooter></ModalFooter>
           </>
         )}
       </ModalContent>

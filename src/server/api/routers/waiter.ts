@@ -96,4 +96,12 @@ export const waiterRouter = createTRPCRouter({
         return error;
       }
     }),
+
+  getTips: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.tips.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+  }),
 });
