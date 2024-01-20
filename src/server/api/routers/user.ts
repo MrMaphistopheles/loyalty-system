@@ -382,7 +382,7 @@ export const userRouter = createTRPCRouter({
           customarId: ctx.session.user.id,
           rateId: input.rateId,
           userId: input.waiterId,
-          orderStatus: "in process",
+          orderStatus: "in_process",
         },
       });
       console.log(tipDetails);

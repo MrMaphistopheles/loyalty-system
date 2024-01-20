@@ -256,18 +256,13 @@ function Messages({ role }: { role: UserRole | null }) {
       return (
         <Link href="/messages" className="px-4">
           <svg
-            version="1.1"
-            id="Capa_1"
+            className="h-6 w-6 text-black dark:text-white"
+            aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-black"
-            viewBox="0 0 960.3 960.299"
+            fill="currentColor"
+            viewBox="0 0 20 18"
           >
-            <g>
-              <path
-                d="M0,862.281c0,23.4,25.6,37.8,45.6,25.601l156-95.101c9.4-5.7,20.2-8.8,31.2-8.8h667.5c33.101,0,60-26.9,60-60v-596
-		c0-33.1-26.899-60-60-60H60c-33.1,0-60,26.9-60,60V862.281z"
-              />
-            </g>
+            <path d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3.546l3.2 3.659a1 1 0 0 0 1.506 0L13.454 14H18a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-8 10H5a1 1 0 0 1 0-2h5a1 1 0 1 1 0 2Zm5-4H5a1 1 0 0 1 0-2h10a1 1 0 1 1 0 2Z" />
           </svg>
         </Link>
       );
@@ -276,18 +271,13 @@ function Messages({ role }: { role: UserRole | null }) {
       <Link href="/messages" className="px-4">
         {messageCount?.length === 0 ? (
           <svg
-            version="1.1"
-            id="Capa_1"
+            className="h-6 w-6 text-black dark:text-white"
+            aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-black"
-            viewBox="0 0 960.3 960.299"
+            fill="currentColor"
+            viewBox="0 0 20 18"
           >
-            <g>
-              <path
-                d="M0,862.281c0,23.4,25.6,37.8,45.6,25.601l156-95.101c9.4-5.7,20.2-8.8,31.2-8.8h667.5c33.101,0,60-26.9,60-60v-596
-		c0-33.1-26.899-60-60-60H60c-33.1,0-60,26.9-60,60V862.281z"
-              />
-            </g>
+            <path d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3.546l3.2 3.659a1 1 0 0 0 1.506 0L13.454 14H18a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-8 10H5a1 1 0 0 1 0-2h5a1 1 0 1 1 0 2Zm5-4H5a1 1 0 0 1 0-2h10a1 1 0 1 1 0 2Z" />
           </svg>
         ) : (
           <Badge
@@ -296,18 +286,13 @@ function Messages({ role }: { role: UserRole | null }) {
             placement="top-left"
           >
             <svg
-              version="1.1"
-              id="Capa_1"
+              className="h-6 w-6 text-black dark:text-white"
+              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-black"
-              viewBox="0 0 960.3 960.299"
+              fill="currentColor"
+              viewBox="0 0 20 18"
             >
-              <g>
-                <path
-                  d="M0,862.281c0,23.4,25.6,37.8,45.6,25.601l156-95.101c9.4-5.7,20.2-8.8,31.2-8.8h667.5c33.101,0,60-26.9,60-60v-596
-		c0-33.1-26.899-60-60-60H60c-33.1,0-60,26.9-60,60V862.281z"
-                />
-              </g>
+              <path d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3.546l3.2 3.659a1 1 0 0 0 1.506 0L13.454 14H18a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-8 10H5a1 1 0 0 1 0-2h5a1 1 0 1 1 0 2Zm5-4H5a1 1 0 0 1 0-2h10a1 1 0 1 1 0 2Z" />
             </svg>
           </Badge>
         )}
@@ -319,10 +304,8 @@ function Messages({ role }: { role: UserRole | null }) {
 function Money({ role }: { role: UserRole | null }) {
   const { data, isLoading } = api.waiter.getTips.useQuery();
 
-  const tipsCount = data?.filter((i) => i.orderStatus === "approved").length;
-
   if (role === "WAITER") {
-    if (isLoading || tipsCount === 0) {
+    if (isLoading || data?.balance === 0) {
       return (
         <Link href="/tips" className="px-4">
           <svg
@@ -381,7 +364,11 @@ function Money({ role }: { role: UserRole | null }) {
 
     return (
       <Link href="/tips" className="px-4">
-        <Badge content={tipsCount} color="primary" placement="top-left">
+        <Badge
+          content={data && data.balance / 100}
+          color="primary"
+          placement="top-left"
+        >
           <svg
             className="h-6 w-6 text-black dark:text-white"
             version="1.1"

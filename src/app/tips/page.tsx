@@ -5,20 +5,6 @@ import { Button, Skeleton } from "@nextui-org/react";
 import React, { useEffect, useRef, useState } from "react";
 import Chart, { ChartData, ChartOptions } from "chart.js/auto";
 
-const chartData = {
-  labels: ["January", "February", "March", "April", "May", "June", "July"],
-  datasets: [
-    {
-      label: "My Dataset",
-      data: [65, 59, 80, 81, 56, 55, 40],
-      fill: false,
-      borderColor: "#000",
-      tension: 0.5,
-      pointStyle: false,
-    },
-  ],
-};
-
 const chartOptions = {
   scales: {
     y: {
@@ -29,16 +15,59 @@ const chartOptions = {
 
 export default function Tips() {
   const { data, isLoading } = api.waiter.getTips.useQuery();
+  const [isSelected, setSelected] = useState(7);
 
-  const sum = data
-    ?.map((i) => i.amount)
-    .reduce((prev, curent) => prev + curent, 0);
-  const validSum = Math.round(sum !== undefined ? sum / 100 : 0);
+  const { data: ChartData, refetch } = api.waiter.getTipsDataForChart.useQuery({
+    days: isSelected,
+  });
+
+  console.log(ChartData);
+
+  const chartData = {
+    labels: ChartData?.map((i) => i.date),
+    datasets: [
+      {
+        label: "uah",
+        data: ChartData?.map((i) => Math.round(i.amount) / 100),
+        fill: false,
+        borderColor: "#000",
+        tension: 0.5,
+        pointStyle: false,
+      },
+    ],
+  };
+
+  useEffect(() => {
+    void refetch();
+  }, [isSelected]);
+
+  const btn = [
+    { item: "7 days", val: 7 },
+    { item: "30 days", val: 30 },
+    { item: "90 days", val: 90 },
+    { item: "Year", val: 365 },
+  ];
 
   return (
     <Layout gap={4}>
       <LineChart data={chartData} options={chartOptions} />
-      <Buttons />
+      <div className="flex w-full items-center justify-center gap-2">
+        {btn.map((i) => (
+          <Button
+            key={i.val}
+            onClick={() => setSelected(i.val)}
+            variant="solid"
+            size="md"
+            className={
+              isSelected === i.val
+                ? "bg-white text-black dark:bg-black  dark:text-white"
+                : "bg-black text-white dark:bg-white  dark:text-black"
+            }
+          >
+            {i.item}
+          </Button>
+        ))}
+      </div>
       <div className="glass flex h-[13em] w-full items-center justify-center rounded-xl">
         {isLoading ? (
           <LoadingSum />
@@ -48,7 +77,7 @@ export default function Tips() {
               <p>uah</p>
             </div>
             <h1 className="text-[280%] font-bold text-black dark:text-white">
-              {validSum} ₴
+              {data?.balance !== undefined ? data.balance / 100 : null} ₴
             </h1>
           </>
         )}
@@ -56,7 +85,7 @@ export default function Tips() {
       <Button
         variant="solid"
         size="lg"
-        className="bg-black text-white dark:bg-white dark:text-black w-2/3"
+        className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
       >
         Вивести
       </Button>
@@ -68,32 +97,6 @@ function LoadingSum() {
   return (
     <div className="flex w-full items-center justify-center">
       <Skeleton className="h-12 w-3/5 rounded-lg" />
-    </div>
-  );
-}
-
-
-function Buttons() {
-  const [isSelected, setSelected] = useState<string>();
-
-  const btn = [
-    { val: "7 days" },
-    { val: "30 days" },
-    { val: "90 days" },
-    { val: "Year" },
-  ];
-  return (
-    <div className="flex w-full items-center justify-center gap-2">
-      {btn.map((i) => (
-        <Button
-          onClick={() => setSelected(i.val)}
-          variant="solid"
-          size="md"
-          className="bg-black text-white dark:bg-white dark:text-black "
-        >
-          {i.val}
-        </Button>
-      ))}
     </div>
   );
 }
