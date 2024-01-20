@@ -129,37 +129,20 @@ export const waiterRouter = createTRPCRouter({
           createdAt: i.createdAt,
         });
       });
-      /* type Item = { [date: string]: number[] };
-
-      const groups: Item = Data.reduce((groups, amounts) => {
-        const date: string = amounts.createdAt?.toDateString() ?? "";
-
-        if (!groups[date as keyof Item]) {
-          groups[date] = [];
-        }
-
-        groups[date as keyof Item].push(amounts.amount);
-        return groups;
-      }, {}); */
 
       type Item = { [date: string]: number[] };
 
-      let groups: Item = {};
+      const groups: Item = {};
 
       for (const amounts of Data) {
-        const date: string = amounts.createdAt?.toDateString() ?? "";
+        const date: string = amounts.createdAt?.toDateString() || "";
 
         if (!groups[date]) {
           groups[date] = [];
         }
 
-        if (groups[date] !== undefined) {
-          //@ts-ignore
-          groups[date].push(amounts.amount);
-        }
+        groups[date]?.push(amounts.amount);
       }
-
-      console.log(groups);
 
       const groupArrays = Object.keys(groups).map((date) => {
         return {
