@@ -23,12 +23,19 @@ export default function Tips() {
 
   console.log(ChartData);
 
+  let lables: string[] = [];
+  let Data: number[] = [];
+  if (ChartData && ChartData[0]?.date) {
+    lables = ChartData?.map((i) => i.date);
+    Data = ChartData?.map((i) => Math.round(i.amount) / 100);
+  }
+
   const chartData = {
-    labels: ChartData?.map((i) => i.date),
+    labels: lables,
     datasets: [
       {
         label: "uah",
-        data: ChartData?.map((i) => Math.round(i.amount) / 100),
+        data: Data,
         fill: false,
         borderColor: "#000",
         tension: 0.5,

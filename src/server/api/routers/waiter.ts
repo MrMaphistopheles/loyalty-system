@@ -152,8 +152,11 @@ export const waiterRouter = createTRPCRouter({
         if (!groups[date]) {
           groups[date] = [];
         }
-        //@ts-ignore
-        groups[date].push(amounts.amount);
+
+        if (groups[date] !== undefined) {
+          //@ts-ignore
+          groups[date].push(amounts.amount);
+        }
       }
 
       console.log(groups);
