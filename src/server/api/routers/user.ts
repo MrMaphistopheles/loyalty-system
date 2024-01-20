@@ -393,7 +393,29 @@ export const userRouter = createTRPCRouter({
   updatePaymentDetails: publicProcedure
     .input(TransactionSchema)
     .mutation(async ({ ctx, input }) => {
-      console.log(input);
+      const findWaiter = await ctx.db.tips.findUnique({
+        where: {
+          orderId: input.order_id,
+        },
+      });
+
+      const findTipsBlance = await ctx.db.tipBalance.findFirst({
+        where: {
+          userId: findWaiter?.userId,
+        },
+      });
+      
+      const tipBalanceUpdate = await ctx.db.tipBalance.updateMany({
+        where: {
+          userId: findWaiter?.userId,
+        },
+        data: {
+          balance:
+            findTipsBlance?.balance !== undefined
+              ? findTipsBlance?.balance + parseInt(input.amount)
+              : +0,
+        },
+      });
 
       return await ctx.db.tips.update({
         where: {

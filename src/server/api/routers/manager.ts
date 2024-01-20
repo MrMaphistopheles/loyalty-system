@@ -40,6 +40,9 @@ export const managerRouter = createTRPCRouter({
           email: input.email,
           name: input.name,
           role: "WAITER",
+          tipBalance: {
+            create: {},
+          },
           createdBy: {
             connect: {
               id: ctx.session.user.id,
