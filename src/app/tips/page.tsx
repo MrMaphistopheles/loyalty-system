@@ -4,6 +4,7 @@ import Layout from "../_components/app/Layout";
 import { Button, Skeleton } from "@nextui-org/react";
 import React, { useEffect, useRef, useState } from "react";
 import Chart, { ChartData, ChartOptions } from "chart.js/auto";
+import Link from "next/link";
 
 const chartOptions = {
   scales: {
@@ -21,12 +22,12 @@ export default function Tips() {
     days: isSelected,
   });
 
-  console.log(ChartData);
+  //console.log(ChartData);
 
   let lables: string[] = [];
   let Data: number[] = [];
   if (ChartData && ChartData[0]?.date) {
-    lables = ChartData?.map((i) => i.date);
+    lables = ChartData?.map((i) => i.date.slice(0, 10));
     Data = ChartData?.map((i) => Math.round(i.amount) / 100);
   }
 
@@ -89,13 +90,18 @@ export default function Tips() {
           </>
         )}
       </div>
-      <Button
-        variant="solid"
-        size="lg"
-        className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
+      <Link
+        href="/withdraw"
+        className="flex w-full items-center justify-center"
       >
-        Вивести
-      </Button>
+        <Button
+          variant="solid"
+          size="lg"
+          className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
+        >
+          Вивести
+        </Button>
+      </Link>
     </Layout>
   );
 }
