@@ -1,13 +1,9 @@
 "use client";
-import {
-  Accordion,
-  AccordionItem,
-  CircularProgress,
-  ScrollShadow,
-} from "@nextui-org/react";
+import { CircularProgress, ScrollShadow } from "@nextui-org/react";
 import Layout from "../_components/app/Layout";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { api } from "@/trpc/react";
+import { motion } from "framer-motion";
 
 const items = [...Array(6).keys()].slice(1);
 
@@ -17,6 +13,7 @@ export default function page() {
   const container = useRef<HTMLDivElement>(null);
 
   const { data, isSuccess } = api.waiter.getRating.useQuery();
+
   useEffect(() => {
     if (data && data.persenteg) {
       setVal(data.persenteg);
@@ -51,35 +48,7 @@ export default function page() {
     fetchData();
   }, [successfulFeched]);
 
-  const handleScroll = () => {
-    const con = container.current;
-    console.log("called");
-    
-
-    if (con && con.scrollTop + con.clientHeight === con.scrollHeight) {
-      console.log("work");
-
-      fetchData();
-    }
-  };
-
-  useEffect(() => {
-    const con = container.current;
-
-    if (con) {
-      con.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (con) {
-        con.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
-
-  console.log(rates);
-
-  console.log(page);
+  const lastItem = useCallback(() => fetchData(), []);
 
   return (
     <Layout gap={4}>
@@ -89,7 +58,7 @@ export default function page() {
             <div key={i}>
               <svg
                 className={`h-12 w-12 ${
-                  data && parseInt(data.value) >= i
+                  data && Math.round(parseFloat(data.value)) >= i
                     ? "text-yellow-400"
                     : "text-white"
                 }`}
@@ -128,23 +97,7 @@ export default function page() {
       </div>
       <ScrollShadow className="w-full">
         <div className="flex h-[17em] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent">
-          <Accordion ref={container}>
-            {rate !== undefined ? (
-              rate.map((i) => (
-                <AccordionItem
-                  key={i.id}
-                  aria-label={i.stars.toString()}
-                  startContent={<Stars count={i.stars} />}
-                >
-                  {i.desc}
-                </AccordionItem>
-              ))
-            ) : (
-              <AccordionItem key="1" aria-label="some" title="some">
-                some
-              </AccordionItem>
-            )}
-          </Accordion>
+          <AccorditionWithInfiniteScroll data={rates} />
         </div>
       </ScrollShadow>
     </Layout>
@@ -166,6 +119,72 @@ function Stars({ count }: { count: number }) {
           >
             <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
           </svg>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AccorditionWithInfiniteScroll({
+  data,
+}: {
+  data?: { id: string; stars: number; desc: string }[];
+}) {
+  const [isOpen, setIsOpen] = useState<string>();
+
+  return (
+    <div className="flex w-full flex-col ">
+      {data?.map((i) => (
+        <div
+          key={i.id}
+          className="flex w-full flex-col items-center justify-center  "
+          style={{
+            transition:
+              "opacity .5s, font-size .5s .5s, margin .5s .25s, padding .5s .25s",
+          }}
+        >
+          <div
+            className="flex h-14 w-full items-center justify-between px-2"
+            onClick={() => {
+              if (isOpen === i.id) setIsOpen("");
+              if (isOpen !== i.id) setIsOpen(i.id);
+            }}
+          >
+            <Stars count={i.stars} />
+            <div
+              style={{
+                transform: `rotate(${isOpen === i.id ? -90 : 0}deg)`,
+                transition: `0.3s ease-in-out`,
+              }}
+            >
+              <svg
+                className="h-6 w-6 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m15 19-7-7 7-7"
+                />
+              </svg>
+            </div>
+          </div>
+          {isOpen === i.id ? (
+            <motion.div
+              className="flex w-full items-start px-2"
+              initial={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <span>{i.desc}</span>
+            </motion.div>
+          ) : null}
         </div>
       ))}
     </div>
