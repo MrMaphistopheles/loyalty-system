@@ -9,7 +9,7 @@ export default function WithDrawRequest() {
   return (
     <Layout>
       <ScrollShadow className="w-full">
-        <div className="flex h-[90dvh] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent px-6 py-8">
+        <div className="flex h-[80dvh] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent px-6 py-8">
           {data &&
             data.map((i) => (
               <div

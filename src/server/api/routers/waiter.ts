@@ -205,4 +205,41 @@ export const waiterRouter = createTRPCRouter({
       },
     });
   }),
+
+  getRating: protectedProcedure.query(async ({ ctx }) => {
+    const rating = await ctx.db.rate.findMany({
+      where: {
+        waiterId: ctx.session.user.id,
+      },
+    });
+
+    const val = rating.map((i) => i.stars).reduce((a, b) => a + b, 0);
+    const devided = val / rating.length;
+    const value = devided.toString().slice(0, 4);
+    const persenteg = (devided * 100) / 5;
+
+    return { value, persenteg };
+  }),
+
+  getRatingDescription: protectedProcedure.query(async ({ ctx }) => {
+    const rating = await ctx.db.rate.findMany({
+      where: {
+        waiterId: ctx.session.user.id,
+      },
+    });
+    let data: {
+      id: string;
+      stars: number;
+      desc: string | undefined;
+    }[] = [];
+    rating.forEach((e) => {
+      data.push({
+        id: e.id,
+        stars: e.stars,
+        desc: e.description?.toString("utf-8"),
+      });
+    });
+
+    return data;
+  }),
 });
