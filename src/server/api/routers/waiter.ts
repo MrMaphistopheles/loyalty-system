@@ -164,4 +164,45 @@ export const waiterRouter = createTRPCRouter({
 
       return chartData;
     }),
+  requestWithDraw: protectedProcedure
+    .input(z.object({ amount: z.number(), accepted: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const withDraw = await ctx.db.withdraw.create({
+        data: {
+          amount: input.amount,
+          accepted: input.accepted,
+          userId: ctx.session.user.id,
+        },
+      });
+      const reserved = await ctx.db.tipBalance.updateMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        data: {
+          balance: 0,
+          reserved: input.amount,
+        },
+      });
+      return { withDraw, reserved };
+    }),
+
+  changeCardNum: protectedProcedure
+    .input(z.object({ cardNum: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.tipBalance.updateMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        data: {
+          card: input.cardNum,
+        },
+      });
+    }),
+  getWithDrawStatus: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.withdraw.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+  }),
 });

@@ -7,7 +7,6 @@ import {
   Avatar,
   Button,
   ButtonGroup,
-  Input,
   Textarea,
 } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
@@ -48,7 +47,6 @@ export default function Rate() {
     },
   });
 
-  SvgBird;
 
   return (
     <Layout isVisible={false} gap={8}>

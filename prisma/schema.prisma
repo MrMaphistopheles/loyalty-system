@@ -67,6 +67,7 @@ model User {
     rate       Rate[]
     tips       tips[]
     tipBalance tipBalance[]
+    withdraw   withdraw[]
 }
 
 model VerificationToken {
@@ -182,11 +183,22 @@ model tips {
 model tipBalance {
     id        String   @id @default(cuid())
     balance   Int      @default(0)
-    //card      Int
+    reserved  Int?     @default(0)
+    card      String   @default("0000 0000 0000 0000")
     User      User?    @relation(fields: [userId], references: [id])
     userId    String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+model withdraw {
+    id        String   @id @default(cuid())
+    amount    Int
+    createdAt DateTime @default(now())
+    accepted  Boolean
+    status    String   @default("processing")
+    User      User?    @relation(fields: [userId], references: [id])
+    userId    String?
 }
 
 model Transaction {
