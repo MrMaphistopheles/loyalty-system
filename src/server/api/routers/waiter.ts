@@ -1,4 +1,4 @@
-import { string, z } from "zod";
+import { number, string, z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
@@ -221,25 +221,35 @@ export const waiterRouter = createTRPCRouter({
     return { value, persenteg };
   }),
 
-  getRatingDescription: protectedProcedure.query(async ({ ctx }) => {
-    const rating = await ctx.db.rate.findMany({
-      where: {
-        waiterId: ctx.session.user.id,
-      },
-    });
-    let data: {
-      id: string;
-      stars: number;
-      desc: string | undefined;
-    }[] = [];
-    rating.forEach((e) => {
-      data.push({
-        id: e.id,
-        stars: e.stars,
-        desc: e.description?.toString("utf-8"),
-      });
-    });
+  getRatingDescription: protectedProcedure
+    .input(z.object({ page: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const limit = 5;
+      const page = input.page;
+      const offset = limit * (page - 1);
 
-    return data;
-  }),
+      const rating = await ctx.db.rate.findMany({
+        skip: offset,
+        take: limit,
+        where: {
+          waiterId: ctx.session.user.id,
+        },
+      });
+
+      let data: {
+        id: string;
+        stars: number;
+        desc: string;
+      }[] = [];
+
+      rating.forEach((e) => {
+        data.push({
+          id: e.id,
+          stars: e.stars,
+          desc: e.description?.toString("utf-8") ?? "",
+        });
+      });
+
+      return data;
+    }),
 });

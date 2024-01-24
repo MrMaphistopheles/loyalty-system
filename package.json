@@ -34,6 +34,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-color": "^2.19.3",
     "react-dom": "18.2.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
     "use-file-picker": "^2.1.1",

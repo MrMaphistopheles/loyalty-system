@@ -6,13 +6,15 @@ import {
   ScrollShadow,
 } from "@nextui-org/react";
 import Layout from "../_components/app/Layout";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/trpc/react";
 
 const items = [...Array(6).keys()].slice(1);
 
 export default function page() {
   const [val, setVal] = useState(91);
+  const [page, setPage] = useState(1);
+  const container = useRef<HTMLDivElement>(null);
 
   const { data, isSuccess } = api.waiter.getRating.useQuery();
   useEffect(() => {
@@ -21,10 +23,63 @@ export default function page() {
     }
   }, [isSuccess]);
 
-  const { data: rate } = api.waiter.getRatingDescription.useQuery();
+  const {
+    data: rates,
+    refetch,
+    isSuccess: successfulFeched,
+  } = api.waiter.getRatingDescription.useQuery({
+    page: page,
+  });
 
-  const defaultContent =
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus fugit autem corporis vitae nam doloremque aut eius dignissimos quam maiores quaerat sed, amet qui aliquid ea vero dolorum adipisci in.";
+  const [rate, setRate] = useState<NonNullable<typeof rates>>([]);
+
+  const fetchData = () => {
+    if (rate.length === 0) {
+      if (successfulFeched) {
+        setRate(rates);
+      }
+    } else {
+      void refetch();
+      if (successfulFeched) {
+        setRate((prev) => [...prev, ...rates]);
+        setPage((prev) => prev + 1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [successfulFeched]);
+
+  const handleScroll = () => {
+    const con = container.current;
+    console.log("called");
+    
+
+    if (con && con.scrollTop + con.clientHeight === con.scrollHeight) {
+      console.log("work");
+
+      fetchData();
+    }
+  };
+
+  useEffect(() => {
+    const con = container.current;
+
+    if (con) {
+      con.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (con) {
+        con.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  console.log(rates);
+
+  console.log(page);
 
   return (
     <Layout gap={4}>
@@ -72,14 +127,13 @@ export default function page() {
         />
       </div>
       <ScrollShadow className="w-full">
-        <div className="flex h-[20em] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent">
-          <Accordion>
+        <div className="flex h-[17em] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent">
+          <Accordion ref={container}>
             {rate !== undefined ? (
               rate.map((i) => (
                 <AccordionItem
                   key={i.id}
                   aria-label={i.stars.toString()}
-                  //title={i.stars.toString()}
                   startContent={<Stars count={i.stars} />}
                 >
                   {i.desc}

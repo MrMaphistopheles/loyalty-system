@@ -19,18 +19,19 @@ export default function NavMenu() {
     await signOut(); // Call the signOut function without passing any event object
   };
 
-  return (
-    <div className="flex w-full items-center justify-end p-3 dark:text-white">
-      {session?.user ? (
-        <Dropdown className="dark:bg-gray-900 dark:text-white">
-          <DropdownTrigger>
-            <Avatar src={image} />
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Static Actions">
-            <DropdownItem key="Signed">
-              Signed in as {session.user.email}
-            </DropdownItem>
-            {session.user.role === "WAITER" ? (
+  if (session?.user.role === "WAITER") {
+    return (
+      <div className="flex w-full items-center justify-end p-3 dark:text-white">
+        {session?.user ? (
+          <Dropdown className="dark:bg-gray-900 dark:text-white">
+            <DropdownTrigger>
+              <Avatar src={image} />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem key="Signed">
+                Signed in as {session.user.email}
+              </DropdownItem>
+
               <DropdownItem key="waiter-rating">
                 <Link href="/waiter-rating">
                   <div className="flex items-center justify-start gap-2">
@@ -47,9 +48,57 @@ export default function NavMenu() {
                   </div>
                 </Link>
               </DropdownItem>
-            ) : (
-              <DropdownItem></DropdownItem>
-            )}
+
+              <DropdownItem key="withdraw-request">
+                <Link href="/withdraw-request">
+                  <div className="flex items-center justify-start gap-2">
+                    <svg
+                      className="h-4 w-4 text-black dark:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 20 16"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1M2 5h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
+                      />
+                    </svg>
+                    withdraw
+                  </div>
+                </Link>
+              </DropdownItem>
+
+              <DropdownItem
+                key="LogOut"
+                className="text-danger"
+                color="danger"
+                onClick={handleSignOut}
+              >
+                Log Out
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        ) : null}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex w-full items-center justify-end p-3 dark:text-white">
+      {session?.user ? (
+        <Dropdown className="dark:bg-gray-900 dark:text-white">
+          <DropdownTrigger>
+            <Avatar src={image} />
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Static Actions">
+            <DropdownItem key="Signed">
+              Signed in as {session.user.email}
+            </DropdownItem>
+
             <DropdownItem
               key="LogOut"
               className="text-danger"
