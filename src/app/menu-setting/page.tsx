@@ -1,9 +1,9 @@
 "use client";
 import { Button, CircularProgress, Input } from "@nextui-org/react";
-import Layout from "../_components/app/Layout";
 import { api } from "@/trpc/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Authoraised from "../_components/app/Authoraised";
 
 export default function Menu() {
   const [name, setName] = useState("");
@@ -33,9 +33,9 @@ export default function Menu() {
     setHeigth(h);
   }, []);
   console.log(heigth);
-
+  
   return (
-    <Layout>
+    <Authoraised role="MANAGER">
       <div
         className="flex w-full flex-col items-center justify-center gap-3 dark:text-white"
         style={{
@@ -147,6 +147,6 @@ export default function Menu() {
           </Button>
         </div>
       </div>
-    </Layout>
+    </Authoraised>
   );
 }

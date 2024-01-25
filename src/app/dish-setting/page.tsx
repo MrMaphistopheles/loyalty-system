@@ -1,10 +1,10 @@
 "use client";
 import { Button, CircularProgress, Input } from "@nextui-org/react";
-import Layout from "../_components/app/Layout";
 import { api } from "@/trpc/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import Authoraised from "../_components/app/Authoraised";
 
 export default function Menu() {
   const [name, setName] = useState("");
@@ -19,7 +19,7 @@ export default function Menu() {
     refetch,
   } = api.manager.getCategory.useQuery({ id: id ?? "" });
 
-  console.log(data);
+  //console.log(data);
 
   const { mutate, isLoading } = api.manager.addDish.useMutation({
     onSuccess: () => {
@@ -38,10 +38,10 @@ export default function Menu() {
     const h = Math.round((heigth / 100) * 70);
     setHeigth(h);
   }, []);
-  console.log(heigth);
+  //console.log(heigth);
 
   return (
-    <Layout>
+    <Authoraised role="MANAGER">
       <div
         className="flex w-full flex-col items-center justify-center gap-3 dark:text-white"
         style={{
@@ -85,7 +85,7 @@ export default function Menu() {
                     isIconOnly
                     size="sm"
                     className=" bg-black dark:bg-white dark:text-black"
-                    onClick={() => deleteM({ id: i.id ?? ""})}
+                    onClick={() => deleteM({ id: i.id ?? "" })}
                   >
                     {deleteL ? (
                       <CircularProgress
@@ -115,7 +115,7 @@ export default function Menu() {
         <div className="glass flex w-full items-center justify-center gap-3 rounded-2xl p-4">
           <Input
             variant="bordered"
-            label="Категорія"
+            label="Назва"
             size="sm"
             onChange={(e) => setName(e.target.value)}
           />
@@ -153,6 +153,6 @@ export default function Menu() {
           </Button>
         </div>
       </div>
-    </Layout>
+    </Authoraised>
   );
 }

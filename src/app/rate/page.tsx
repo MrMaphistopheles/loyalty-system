@@ -1,18 +1,13 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import Layout from "../_components/app/Layout";
 import { api } from "@/trpc/react";
-import {
-  Avatar,
-  Button,
-  ButtonGroup,
-  Textarea,
-} from "@nextui-org/react";
+import { Avatar, Button, ButtonGroup, Textarea } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { SvgBird } from "../_components/svg/SvgBird";
+import Authoraised from "../_components/app/Authoraised";
 
 const items = [...Array(6).keys()].slice(1);
 
@@ -47,9 +42,8 @@ export default function Rate() {
     },
   });
 
-
   return (
-    <Layout isVisible={false} gap={8}>
+    <Authoraised role="USER">
       {data &&
         data.map((i) => (
           <React.Fragment key={i.id}>
@@ -121,7 +115,7 @@ export default function Rate() {
             </div>
           </React.Fragment>
         ))}
-    </Layout>
+    </Authoraised>
   );
 }
 
@@ -211,7 +205,7 @@ function Tips({
       exit={{ opacity: 0 }}
     >
       <div className="flex w-full items-center justify-center gap-2">
-        <div className="rounded-2xl bg-white min-w-0 min-h-0">
+        <div className="min-h-0 min-w-0 rounded-2xl bg-white">
           <ButtonGroup size="md">
             {tipsAmount.map((i) => (
               <Button

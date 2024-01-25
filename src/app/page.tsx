@@ -1,27 +1,26 @@
-import Layout from "@/app/_components/app/Layout";
-import RoleGuard from "@/app/_components/app/RoleGuard";
+import Authoraised from "@/app/_components/app/Authoraised";
 import DashBord from "@/app/_components/admin/DashBord";
 import Card from "./_components/user/Card";
 import Scaner from "./_components/waiter/Scaner";
 
 export default async function Home() {
   return (
-    <Layout customW={25}>
-      <RoleGuard role="ADMIN">
+    <>
+      <Authoraised role="ADMIN">
         <DashBord role="admin" />
-      </RoleGuard>
-      <RoleGuard role="USER">
+      </Authoraised>
+      <Authoraised role="USER">
         <Card />
-      </RoleGuard>
-      <RoleGuard role="MANAGER">
+      </Authoraised>
+      <Authoraised role="MANAGER">
         <DashBord role="manager" />
-      </RoleGuard>
-      <RoleGuard role="WAITER">
+      </Authoraised>
+      <Authoraised role="WAITER">
         <Scaner />
-      </RoleGuard>
-      <RoleGuard role="NEW">
+      </Authoraised>
+      <Authoraised role="NEW">
         <div>hi</div>
-      </RoleGuard>
-    </Layout>
+      </Authoraised>
+    </>
   );
 }

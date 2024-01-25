@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Layout from "../_components/app/Layout";
 import { Avatar, Image } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/trpc/react";
@@ -11,9 +10,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
   useDisclosure,
 } from "@nextui-org/react";
+import Authoraised from "../_components/app/Authoraised";
 
 export default function Menu() {
   const [selected, setSelected] = useState("");
@@ -53,7 +52,7 @@ export default function Menu() {
   };
 
   return (
-    <Layout isVisible={false}>
+    <Authoraised role="USER">
       <div className="w-full py-8 dark:text-white">
         <div className="flex items-center justify-center gap-6">
           <Breadcrumbs>
@@ -67,7 +66,7 @@ export default function Menu() {
               />
             ))}
           </Breadcrumbs>
-{/*           <div>
+          {/*           <div>
             <Heart />
           </div> */}
         </div>
@@ -98,7 +97,7 @@ export default function Menu() {
         data={dishData}
         id={show}
       />
-    </Layout>
+    </Authoraised>
   );
 }
 

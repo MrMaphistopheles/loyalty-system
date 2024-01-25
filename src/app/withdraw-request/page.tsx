@@ -1,13 +1,13 @@
 "use client";
 import { api } from "@/trpc/react";
-import Layout from "../_components/app/Layout";
 import { ScrollShadow } from "@nextui-org/react";
+import Authoraised from "../_components/app/Authoraised";
 
 export default function WithDrawRequest() {
   const { data, isLoading } = api.waiter.getWithDrawStatus.useQuery();
 
   return (
-    <Layout>
+    <Authoraised role="WAITER">
       <ScrollShadow className="w-full">
         <div className="flex h-[80dvh] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent px-6 py-8">
           {data &&
@@ -38,6 +38,6 @@ export default function WithDrawRequest() {
             ))}
         </div>
       </ScrollShadow>
-    </Layout>
+    </Authoraised>
   );
 }

@@ -1,112 +1,78 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Avatar from "./Avatar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import { Badge } from "@nextui-org/react";
 import { UserRole } from "@prisma/client";
 import { api } from "@/trpc/react";
-import { type Res } from "../../../server/api/routers/user";
 
-export default function Layout({
-  children,
-  customW,
-  isVisible,
-  gap,
-}: {
-  children: React.ReactNode;
-  customW?: number;
-  isVisible?: boolean;
-  gap?: number;
-}) {
+
+export function Head() {
   const pathname: string[] = usePathname().split("");
-
-  const [isDark, setIsDark] = useState<boolean>();
-
-  useEffect(() => {
-    const getCurrentTheme = () =>
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setIsDark(getCurrentTheme());
-  }, []);
-
   const { data: session } = useSession();
 
-  let width: number;
-
-  if (customW !== undefined) {
-    width = customW;
-  } else {
-    width = 25;
-  }
-
-  const router = useRouter();
-  if (!session) {
-    router.push("/api/auth/signin");
-  }
-
-  if (session && session.user) {
+  if (session?.user) {
     return (
-      <div
-        className={
-          "flex h-[100dvh] flex-col items-center justify-end" +
-          (isDark
-            ? "text-white dark dark:bg-black"
-            : "text-black light light:bg-[#ebfbff]")
-        }
-      >
-        {isVisible === undefined ? (
-          <div className="flex w-full items-center justify-between ">
-            {pathname?.length > 1 ? (
-              <Link href=".." className="px-4">
-                <svg
-                  className="h-6 w-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 10 16"
-                >
-                  <path d="M8.766.566A2 2 0 0 0 6.586 1L1 6.586a2 2 0 0 0 0 2.828L6.586 15A2 2 0 0 0 10 13.586V2.414A2 2 0 0 0 8.766.566Z" />
-                </svg>
-              </Link>
-            ) : (
-              <>
-                <Messages role={session.user.role} />
-                <Money role={session.user.role} />
-              </>
-            )}
-
-            <Avatar />
-          </div>
-        ) : null}
-
-        <motion.div
-          className={`flex h-full w-full flex-col items-center justify-center dark:text-white gap-${gap} px-2`}
-          style={{
-            maxWidth: `${width}rem`,
-          }}
-          initial={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          {children}
-        </motion.div>
-        {session.user.role === "USER" ? null : (
-          <div className="static bottom-0 flex h-20 w-full items-center justify-center p-6">
-            {session.user.role === "ADMIN" ? (
-              <MenuForAdmin />
-            ) : session.user.role === "MANAGER" ? (
-              <MenuForManager />
-            ) : null}
-          </div>
+      <div className="flex w-full items-center justify-between ">
+        {pathname?.length > 1 ? (
+          <Link href=".." className="px-4">
+            <svg
+              className="h-6 w-6 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 10 16"
+            >
+              <path d="M8.766.566A2 2 0 0 0 6.586 1L1 6.586a2 2 0 0 0 0 2.828L6.586 15A2 2 0 0 0 10 13.586V2.414A2 2 0 0 0 8.766.566Z" />
+            </svg>
+          </Link>
+        ) : (
+          <>
+            <Messages role={session.user.role} />
+            <Money role={session.user.role} />
+          </>
         )}
+
+        <Avatar />
       </div>
     );
   }
-  return null;
+}
+
+export function ElementAnimation({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      className={`flex h-full w-full flex-col items-center justify-center gap-4 px-2 dark:text-white`}
+      style={{
+        maxWidth: `25rem`,
+      }}
+      initial={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export function Bottom() {
+  const { data: session } = useSession();
+  return (
+    <>
+      {session?.user.role === "USER" ? null : (
+        <div className="static bottom-0 flex h-20 w-full items-center justify-center p-6">
+          {session?.user.role === "ADMIN" ? (
+            <MenuForAdmin />
+          ) : session?.user.role === "MANAGER" ? (
+            <MenuForManager />
+          ) : null}
+        </div>
+      )}
+    </>
+  );
 }
 
 function MenuForAdmin() {
@@ -212,8 +178,6 @@ function MenuForManager() {
     </div>
   );
 }
-
-
 
 function Messages({ role }: { role: UserRole | null }) {
   const { data, isLoading } = api.user.getRates.useQuery();

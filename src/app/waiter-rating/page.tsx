@@ -1,9 +1,9 @@
 "use client";
 import { Button, CircularProgress, ScrollShadow } from "@nextui-org/react";
-import Layout from "../_components/app/Layout";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { api } from "@/trpc/react";
 import { motion } from "framer-motion";
+import Authoraised from "../_components/app/Authoraised";
 
 const items = [...Array(6).keys()].slice(1);
 
@@ -18,7 +18,7 @@ export default function page() {
   }, [isSuccess]);
 
   return (
-    <Layout gap={4}>
+    <Authoraised role="WAITER">
       <div className="glass flex w-full items-start justify-center gap-2 rounded-xl py-3">
         <div className="flex gap-1 py-1">
           {items.map((i) => (
@@ -63,11 +63,11 @@ export default function page() {
         />
       </div>
       <ScrollShadow className="w-full">
-        <div className="flex h-[17em] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent">
+        <div className="hide-scroll flex h-[17em] w-full flex-col items-center justify-start gap-2 overflow-x-auto">
           <AccorditionWithInfiniteScroll />
         </div>
       </ScrollShadow>
-    </Layout>
+    </Authoraised>
   );
 }
 
@@ -95,14 +95,9 @@ function Stars({ count }: { count: number }) {
 function AccorditionWithInfiniteScroll() {
   const [isOpen, setIsOpen] = useState<string>();
   const [page, setPage] = useState(0);
-  const observer = useRef();
-
-  //
 
   const { isLoading, isError, data, fetchNextPage, isMore } =
     useGetRating(page);
-
-  console.log(isMore);
 
   const nextPage = () => {
     void fetchNextPage();
@@ -110,12 +105,12 @@ function AccorditionWithInfiniteScroll() {
   };
 
   return (
-    <div className="flex w-full flex-col ">
+    <div className="flex w-full flex-col">
       {data?.map((i) => {
         return (
           <div
             key={i.id}
-            className="flex w-full flex-col items-center justify-center  "
+            className="flex w-full flex-col items-center justify-center"
             style={{
               transition:
                 "opacity .5s, font-size .5s .5s, margin .5s .25s, padding .5s .25s",

@@ -3,9 +3,10 @@ import "@/styles/globals.css";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import { getServerAuthSession } from "@/server/auth";
-import type { Session } from "next-auth";
 import { TRPCReactProvider } from "@/trpc/react";
 import { UiProvider } from "@/app/_components/providers/UiProvider";
+import { Body } from "@/app/_components/func/useTheme";
+import { Bottom, ElementAnimation, Head } from "./_components/app/Layout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,13 +29,20 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerAuthSession();
+
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable} `}>
+      <Body font={`font-sans ${inter.variable} `}>
         <TRPCReactProvider cookies={cookies().toString()} session={session}>
-          <UiProvider>{children}</UiProvider>
+          <UiProvider>
+            <div className="flex h-[100dvh] flex-col items-center justify-between">
+              <Head />
+              <ElementAnimation>{children}</ElementAnimation>
+              <Bottom />
+            </div>
+          </UiProvider>
         </TRPCReactProvider>
-      </body>
+      </Body>
     </html>
   );
 }

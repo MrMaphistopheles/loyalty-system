@@ -1,10 +1,10 @@
 "use client";
 import { Button, Checkbox, Skeleton } from "@nextui-org/react";
-import Layout from "../_components/app/Layout";
 import { useEffect, useState } from "react";
 import { api } from "@/trpc/react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import Authoraised from "../_components/app/Authoraised";
 
 export default function WithDraw() {
   const [inputValue, setInputValue] = useState("");
@@ -71,7 +71,7 @@ export default function WithDraw() {
   };
 
   return (
-    <Layout gap={4}>
+    <Authoraised role="WAITER">
       {message.length > 0 ? (
         <motion.div
           className="flex flex-col rounded-e-xl rounded-es-xl border-black bg-blue-500 p-4"
@@ -137,6 +137,6 @@ export default function WithDraw() {
       >
         {MisLoading ? "Loading..." : "Вивести"}
       </Button>
-    </Layout>
+    </Authoraised>
   );
 }

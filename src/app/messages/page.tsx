@@ -3,17 +3,15 @@
 import { Avatar, Button, ScrollShadow } from "@nextui-org/react";
 import React from "react";
 import { api } from "@/trpc/react";
-import Layout from "../_components/app/Layout";
 import Link from "next/link";
+import Authoraised from "../_components/app/Authoraised";
 
 export default function Messages() {
   const { data: idata } = api.user.getRatesInfo.useQuery();
-  const  data = [...idata ?? []].reverse()
-
-  
+  const data = [...(idata ?? [])].reverse();
 
   return (
-    <Layout isVisible={false} customW={27}>
+    <Authoraised role="USER">
       <div className="flex w-full flex-col items-center justify-center gap-3 dark:text-white">
         <ScrollShadow className="w-full">
           <div className="flex h-[90dvh] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent px-6 py-8">
@@ -50,6 +48,6 @@ export default function Messages() {
           </div>
         </ScrollShadow>
       </div>
-    </Layout>
+    </Authoraised>
   );
 }

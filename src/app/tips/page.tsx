@@ -1,10 +1,10 @@
 "use client";
 import { api } from "@/trpc/react";
-import Layout from "../_components/app/Layout";
 import { Button, Skeleton } from "@nextui-org/react";
 import React, { useEffect, useRef, useState } from "react";
 import Chart, { ChartData, ChartOptions } from "chart.js/auto";
 import Link from "next/link";
+import Authoraised from "../_components/app/Authoraised";
 
 const chartOptions = {
   scales: {
@@ -57,7 +57,7 @@ export default function Tips() {
   ];
 
   return (
-    <Layout gap={4}>
+    <Authoraised role="WAITER">
       <LineChart data={chartData} options={chartOptions} />
       <div className="flex w-full items-center justify-center gap-2">
         {btn.map((i) => (
@@ -102,7 +102,7 @@ export default function Tips() {
           Вивести
         </Button>
       </Link>
-    </Layout>
+    </Authoraised>
   );
 }
 

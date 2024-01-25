@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import Layout from "../_components/app/Layout";
+
 import {
   Button,
   Image,
@@ -19,6 +19,7 @@ import {
   FileSizeValidator,
   ImageDimensionsValidator,
 } from "use-file-picker/validators";
+import Authoraised from "../_components/app/Authoraised";
 
 export default function EditDish() {
   const searchPram = useSearchParams();
@@ -45,7 +46,6 @@ export default function EditDish() {
 
   const [price, setPrice] = useState<number>(0);
   const [triger, setTriger] = useState(0);
-  const [width, setwidth] = useState(0);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -66,7 +66,6 @@ export default function EditDish() {
   useEffect(() => {
     if (document) {
       const heigth = document.body.clientHeight;
-      setwidth(heigth / 2.2);
     }
   }, []);
 
@@ -114,13 +113,12 @@ export default function EditDish() {
   };
 
   return (
-    <Layout gap={3}>
+    <Authoraised role="MANAGER">
       {image.length > 0 ? (
         <Image
           onClick={openFilePicker}
           src={image}
           alt="Dish Image"
-          //width={width}
           className="max-h-[15em] max-w-[22rem]"
         />
       ) : (
@@ -224,7 +222,7 @@ export default function EditDish() {
           </>
         )}
       </Button>
-    </Layout>
+    </Authoraised>
   );
 }
 

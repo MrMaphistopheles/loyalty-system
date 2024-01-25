@@ -1,8 +1,9 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { UserRole } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
-export default function RoleGuard({
+export default function Authoraised({
   children,
   role,
 }: {
@@ -10,11 +11,11 @@ export default function RoleGuard({
   role: UserRole;
 }) {
   const { data: session } = useSession();
+  const router = useRouter();
+
+  if (!session) router.push("/signin");
+  if (session?.user.role !== role) router.push("/");
   if (session && session.user.role === role) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        {children}
-      </div>
-    );
+    return <>{children}</>;
   }
 }

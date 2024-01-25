@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Layout from "../_components/app/Layout";
 import { Pass } from "../_components/user/Card";
 import { type ColorResult, TwitterPicker } from "react-color";
 import { useFilePicker } from "use-file-picker";
@@ -12,6 +11,7 @@ import {
 } from "use-file-picker/validators";
 import { Button } from "@nextui-org/react";
 import { api } from "@/trpc/react";
+import Authoraised from "../_components/app/Authoraised";
 
 export default function page() {
   const [color, setColor] = useState<string>("");
@@ -84,7 +84,7 @@ export default function page() {
   };
 
   return (
-    <Layout customW={25}>
+    <Authoraised role="MANAGER">
       <div className="flex w-full flex-col items-center justify-center gap-4">
         <Pass
           z={1}
@@ -130,6 +130,6 @@ export default function page() {
         </svg>
         Update
       </Button>
-    </Layout>
+    </Authoraised>
   );
 }

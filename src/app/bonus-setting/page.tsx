@@ -1,11 +1,11 @@
 "use client";
 import { api } from "@/trpc/react";
-import Layout from "../_components/app/Layout";
 import { Button, Input, Select, SelectItem, Skeleton } from "@nextui-org/react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
 import html2canvas from "html2canvas";
+import Authoraised from "../_components/app/Authoraised";
 
 type Arr = {
   val: number;
@@ -97,7 +97,7 @@ export default function Setting() {
   };
 
   return (
-    <Layout>
+    <Authoraised role="MANAGER">
       <div className="flex flex-col items-center justify-center gap-2 dark:text-white">
         <div className="glass flex w-full flex-col items-center justify-center gap-2 rounded-2xl px-8  py-5">
           <h1 className="py-2 text-lg">Налаштування бонусної системи.</h1>
@@ -196,7 +196,7 @@ export default function Setting() {
             </Button>
           </div>
 
-          <div className="rounded-lg bg-white p-3 my-2">
+          <div className="my-2 rounded-lg bg-white p-3">
             <QRCodeCanvas
               value={
                 `http://bonuslite.com/register?id=${session?.user.id}` ?? ""
@@ -222,6 +222,6 @@ export default function Setting() {
           </Button>
         </div>
       </div>
-    </Layout>
+    </Authoraised>
   );
 }

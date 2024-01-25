@@ -1,9 +1,10 @@
 "use client";
 import { Avatar, Button, ScrollShadow } from "@nextui-org/react";
-import Layout from "../_components/app/Layout";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { api } from "@/trpc/react";
+import Authoraised from "../_components/app/Authoraised";
 
 const items = [...Array(7).keys()];
 
@@ -14,11 +15,9 @@ export default function AddCard() {
 
   const { mutate, isLoading: mLoading } = api.user.addPass.useMutation({
     onSuccess: () => {
-      void refetch()
-    }
+      void refetch();
+    },
   });
-
-
 
   const setRotated = (index: number) => {
     if (isRotated === index) {
@@ -29,7 +28,7 @@ export default function AddCard() {
   };
 
   return (
-    <Layout customW={27}>
+    <Authoraised role="USER">
       <div className="flex w-full flex-col items-center justify-center gap-3">
         <ScrollShadow className="w-full">
           <div className="flex h-[75dvh] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent px-6 py-8">
@@ -78,7 +77,7 @@ export default function AddCard() {
           </div>
         </ScrollShadow>
       </div>
-    </Layout>
+    </Authoraised>
   );
 }
 

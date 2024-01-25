@@ -1,7 +1,6 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import Layout from "../_components/app/Layout";
 import { api } from "@/trpc/react";
 import { useEffect } from "react";
 import { Loading } from "../_components/waiter/Scaner";
@@ -38,18 +37,18 @@ export default function Fondy() {
 
   if (isSuccess) {
     return (
-      <Layout gap={8}>
+      <>
         <div className="w-2/3">
           <SvgBird />
         </div>
         <h1 className="text-2xl">Дякуємо за чайові!</h1>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <Loading color="stroke-blue-500" />
-    </Layout>
+    </>
   );
 }
