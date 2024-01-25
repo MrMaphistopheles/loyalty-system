@@ -5,8 +5,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { api } from "@/trpc/react";
 import Authoraised from "../_components/app/Authoraised";
-
-const items = [...Array(7).keys()];
+import Link from "next/link";
 
 export default function AddCard() {
   const [isRotated, setIsRotated] = useState<number>();
@@ -67,9 +66,12 @@ export default function AddCard() {
                       >
                         Додати
                       </Button>
-                      <Button size="lg" className="w-2/3 bg-white text-black">
+                      <Link
+                        href={`/menu?id=${i.id}`}
+                        className="flex h-12 w-2/3 items-center justify-center rounded-xl bg-white text-black"
+                      >
                         Menu
-                      </Button>
+                      </Link>
                     </motion.div>
                   ) : null}
                 </>

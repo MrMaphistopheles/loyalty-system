@@ -14,8 +14,6 @@ export default function Authoraised({
   const router = useRouter();
 
   if (!session) router.push("/signin");
-  if (session?.user.role !== role) router.push("/");
-  if (session && session.user.role === role) {
-    return <>{children}</>;
-  }
+  if (session && session.user.role === role) return <>{children}</>;
+  if (session && session.user.role !== role) router.push("/");
 }

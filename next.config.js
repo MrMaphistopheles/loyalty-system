@@ -3,8 +3,22 @@
  * for Docker builds.
  */
 
-
 /** @type {import("next").NextConfig} */
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+
+const withPWA = require("@ducanh2912/next-pwa").default({
+  dest: "public",
+  cacheOnFrontendNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  swcMinify: true,
+  disable: false,
+  workboxOptions: {
+    disableDevLogs: true,
+  },
+});
+
 const config = {};
 
-export default config;
+export default withPWA(config);
