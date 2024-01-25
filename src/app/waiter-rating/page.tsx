@@ -1,5 +1,5 @@
 "use client";
-import { CircularProgress, ScrollShadow } from "@nextui-org/react";
+import { Button, CircularProgress, ScrollShadow } from "@nextui-org/react";
 import Layout from "../_components/app/Layout";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { api } from "@/trpc/react";
@@ -8,10 +8,7 @@ import { motion } from "framer-motion";
 const items = [...Array(6).keys()].slice(1);
 
 export default function page() {
-  const [val, setVal] = useState(91);
-  const [page, setPage] = useState(1);
-  const container = useRef<HTMLDivElement>(null);
-
+  const [val, setVal] = useState(0);
   const { data, isSuccess } = api.waiter.getRating.useQuery();
 
   useEffect(() => {
@@ -19,36 +16,6 @@ export default function page() {
       setVal(data.persenteg);
     }
   }, [isSuccess]);
-
-  const {
-    data: rates,
-    refetch,
-    isSuccess: successfulFeched,
-  } = api.waiter.getRatingDescription.useQuery({
-    page: page,
-  });
-
-  const [rate, setRate] = useState<NonNullable<typeof rates>>([]);
-
-  const fetchData = () => {
-    if (rate.length === 0) {
-      if (successfulFeched) {
-        setRate(rates);
-      }
-    } else {
-      void refetch();
-      if (successfulFeched) {
-        setRate((prev) => [...prev, ...rates]);
-        setPage((prev) => prev + 1);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [successfulFeched]);
-
-  const lastItem = useCallback(() => fetchData(), []);
 
   return (
     <Layout gap={4}>
@@ -97,7 +64,7 @@ export default function page() {
       </div>
       <ScrollShadow className="w-full">
         <div className="flex h-[17em] w-full flex-col items-center justify-start gap-2 overflow-x-auto bg-transparent">
-          <AccorditionWithInfiniteScroll data={rates} />
+          <AccorditionWithInfiniteScroll />
         </div>
       </ScrollShadow>
     </Layout>
@@ -125,68 +92,152 @@ function Stars({ count }: { count: number }) {
   );
 }
 
-function AccorditionWithInfiniteScroll({
-  data,
-}: {
-  data?: { id: string; stars: number; desc: string }[];
-}) {
+function AccorditionWithInfiniteScroll() {
   const [isOpen, setIsOpen] = useState<string>();
+  const [page, setPage] = useState(0);
+  const observer = useRef();
+
+  //
+
+  const { isLoading, isError, data, fetchNextPage, isMore } =
+    useGetRating(page);
+
+  console.log(isMore);
+
+  const nextPage = () => {
+    void fetchNextPage();
+    setPage((prev) => prev + 1);
+  };
 
   return (
     <div className="flex w-full flex-col ">
-      {data?.map((i) => (
-        <div
-          key={i.id}
-          className="flex w-full flex-col items-center justify-center  "
-          style={{
-            transition:
-              "opacity .5s, font-size .5s .5s, margin .5s .25s, padding .5s .25s",
-          }}
-        >
+      {data?.map((i) => {
+        return (
           <div
-            className="flex h-14 w-full items-center justify-between px-2"
-            onClick={() => {
-              if (isOpen === i.id) setIsOpen("");
-              if (isOpen !== i.id) setIsOpen(i.id);
+            key={i.id}
+            className="flex w-full flex-col items-center justify-center  "
+            style={{
+              transition:
+                "opacity .5s, font-size .5s .5s, margin .5s .25s, padding .5s .25s",
             }}
           >
-            <Stars count={i.stars} />
             <div
-              style={{
-                transform: `rotate(${isOpen === i.id ? -90 : 0}deg)`,
-                transition: `0.3s ease-in-out`,
+              className="flex h-14 w-full items-center justify-between px-2"
+              onClick={() => {
+                if (isOpen === i.id) setIsOpen("");
+                if (isOpen !== i.id) setIsOpen(i.id);
               }}
             >
-              <svg
-                className="h-6 w-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
+              <Stars count={i.stars} />
+              <div
+                style={{
+                  transform: `rotate(${isOpen === i.id ? -90 : 0}deg)`,
+                  transition: `0.3s ease-in-out`,
+                }}
               >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m15 19-7-7 7-7"
-                />
-              </svg>
+                <svg
+                  className="h-6 w-6 text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m15 19-7-7 7-7"
+                  />
+                </svg>
+              </div>
             </div>
+            {isOpen === i.id ? (
+              <motion.div
+                className="flex w-full items-start px-2 py-3"
+                initial={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <span>{i.desc}</span>
+              </motion.div>
+            ) : null}
           </div>
-          {isOpen === i.id ? (
-            <motion.div
-              className="flex w-full items-start px-2"
-              initial={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <span>{i.desc}</span>
-            </motion.div>
-          ) : null}
+        );
+      })}
+      {isMore ? (
+        <div
+          onClick={nextPage}
+          className="mt-3 flex w-full items-center justify-center border-t-1 border-black py-3 dark:border-white"
+          style={{
+            opacity: isMore ? 1 : 0,
+            transition: "all .3s ease-in-out",
+          }}
+        >
+          <p> Load more</p>
         </div>
-      ))}
+      ) : null}
+
+      {isLoading ? (
+        <div className="mt-3 flex w-full items-center justify-center border-t-1 border-black py-3 dark:border-white">
+          <p> Loading...</p>
+        </div>
+      ) : null}
+      {isError ? (
+        <div className="mt-3 flex w-full items-center justify-center border-t-1 border-black py-3 dark:border-white ">
+          <p>Server Error! Try refrech page.</p>
+        </div>
+      ) : null}
     </div>
   );
+}
+
+function useGetRating(page: number) {
+  const {
+    data: rate,
+    isSuccess,
+    isLoading,
+    isError,
+    fetchNextPage,
+  } = api.waiter.getRatingDescription.useInfiniteQuery(
+    {
+      limit: 5,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
+
+  const [data, setData] = useState<
+    {
+      id: string;
+      stars: number;
+      desc: string;
+    }[]
+  >([]);
+  const [isMore, setIsMore] = useState(true);
+
+  useEffect(() => {
+    setData((prevRate) => {
+      const newItem = rate?.pages[page]?.items;
+
+      if (newItem) {
+        return [...new Set([...prevRate, ...newItem])];
+      }
+      return prevRate;
+    });
+  }, [page, rate]);
+
+  const hasMore = rate?.pages[page]?.hasMore;
+
+  console.log(hasMore);
+
+  useEffect(() => {
+    if (hasMore !== undefined) {
+      setIsMore(hasMore);
+    }
+  }, [hasMore]);
+
+  return { fetchNextPage, isLoading, isError, data, isMore };
 }

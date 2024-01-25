@@ -222,34 +222,52 @@ export const waiterRouter = createTRPCRouter({
   }),
 
   getRatingDescription: protectedProcedure
-    .input(z.object({ page: z.number() }))
+    .input(
+      z.object({
+        limit: z.number(),
+        cursor: z.string().nullish(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
-      const limit = 5;
-      const page = input.page;
-      const offset = limit * (page - 1);
+      const { limit, cursor } = input;
 
       const rating = await ctx.db.rate.findMany({
-        skip: offset,
-        take: limit,
+        take: limit + 1,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          id: "asc",
+        },
         where: {
           waiterId: ctx.session.user.id,
         },
       });
 
-      let data: {
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      if (rating.length > limit) {
+        const nextItem = rating.pop();
+        nextCursor = nextItem?.id;
+      }
+
+      let hasMore = true;
+      if (nextCursor === undefined) {
+        hasMore = false;
+      }
+
+      let items: {
         id: string;
         stars: number;
         desc: string;
       }[] = [];
 
       rating.forEach((e) => {
-        data.push({
+        items.push({
           id: e.id,
           stars: e.stars,
           desc: e.description?.toString("utf-8") ?? "",
         });
       });
 
-      return data;
+      return { items, nextCursor, hasMore };
     }),
 });
