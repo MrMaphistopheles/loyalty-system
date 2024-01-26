@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { Helmet } from "react-helmet";
+
 
 export function useTheme() {
   const [isDark, setIsDark] = useState<boolean>();
@@ -40,6 +40,13 @@ export function Body({
           : "text-black light light:bg-[#ebfbff]")
       }
     >
+      <Helmet>
+        {isDark ? <meta name="theme-color" content="#000" /> :
+          <meta name="theme-color" content="#ebfbff" />}
+
+
+      </Helmet>
+
       {children}
     </body>
   );

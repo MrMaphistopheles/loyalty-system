@@ -22,3 +22,4 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 const config = {};
 
 export default withPWA(config);
+//export default config;

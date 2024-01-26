@@ -19,7 +19,6 @@ export const metadata = {
   description: "Loyalty system",
 };
 export const viewport = {
-  themeColor: "#000",
   maximumScale: 1,
 };
 
