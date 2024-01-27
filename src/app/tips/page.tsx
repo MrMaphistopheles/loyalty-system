@@ -5,14 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Chart, { ChartData, ChartOptions } from "chart.js/auto";
 import Link from "next/link";
 import Authoraised from "../_components/app/Authoraised";
-
-const chartOptions = {
-  scales: {
-    y: {
-      beginAtZero: true,
-    },
-  },
-};
+import { useTheme } from "../_components/func/useTheme";
 
 export default function Tips() {
   const { data, isLoading } = api.waiter.getTips.useQuery();
@@ -22,14 +15,38 @@ export default function Tips() {
     days: isSelected,
   });
 
-  //console.log(ChartData);
-
   let lables: string[] = [];
   let Data: number[] = [];
   if (ChartData && ChartData[0]?.date) {
     lables = ChartData?.map((i) => i.date.slice(0, 10));
     Data = ChartData?.map((i) => Math.round(i.amount) / 100);
   }
+
+  const { isDark } = useTheme();
+
+  console.log(isDark);
+
+  const chartOptions = {
+    scales: {
+      x: {
+        ticks: {
+          color: isDark ? "#fff" : "#000",
+        },
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        ticks: {
+          color: isDark ? "#fff" : "#000",
+        },
+        beginAtZero: true,
+        grid: {
+          display: false,
+        },
+      },
+    },
+  };
 
   const chartData = {
     labels: lables,
@@ -38,7 +55,8 @@ export default function Tips() {
         label: "uah",
         data: Data,
         fill: false,
-        borderColor: "#000",
+        borderColor: isDark ? "#fff" : "#000",
+        backgroundColor: isDark ? "#fff" : "#000",
         tension: 0.5,
         pointStyle: false,
       },

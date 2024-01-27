@@ -1,4 +1,4 @@
-import { number, string, z } from "zod";
+import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
@@ -203,6 +203,9 @@ export const waiterRouter = createTRPCRouter({
       where: {
         userId: ctx.session.user.id,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   }),
 
@@ -212,9 +215,9 @@ export const waiterRouter = createTRPCRouter({
         waiterId: ctx.session.user.id,
       },
     });
-
-    const val = rating.map((i) => i.stars).reduce((a, b) => a + b, 0);
-    const devided = val / rating.length;
+    const filtered = rating.filter((i) => i.stars !== 0);
+    const val = filtered.map((i) => i.stars).reduce((a, b) => a + b, 0);
+    const devided = val / filtered.length;
     const value = devided.toString().slice(0, 4);
     const persenteg = (devided * 100) / 5;
 
@@ -235,7 +238,7 @@ export const waiterRouter = createTRPCRouter({
         take: limit + 1,
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
-          id: "asc",
+          createdAt: "desc",
         },
         where: {
           waiterId: ctx.session.user.id,

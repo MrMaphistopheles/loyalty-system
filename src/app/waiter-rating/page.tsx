@@ -63,7 +63,7 @@ export default function page() {
         />
       </div>
       <ScrollShadow className="w-full">
-        <div className="hide-scroll flex h-[17em] w-full flex-col items-center justify-start gap-2 overflow-x-auto">
+        <div className="hide-scroll flex h-[20em] w-full flex-col items-center justify-start gap-2 overflow-x-auto">
           <AccorditionWithInfiniteScroll />
         </div>
       </ScrollShadow>
@@ -164,7 +164,7 @@ function AccorditionWithInfiniteScroll() {
       {isMore ? (
         <div
           onClick={nextPage}
-          className="mt-3 flex w-full items-center justify-center border-t-1 border-black py-3 dark:border-white"
+          className="border-t-1 mt-3 flex w-full items-center justify-center border-black py-3 dark:border-white"
           style={{
             opacity: isMore ? 1 : 0,
             transition: "all .3s ease-in-out",
@@ -175,12 +175,12 @@ function AccorditionWithInfiniteScroll() {
       ) : null}
 
       {isLoading ? (
-        <div className="mt-3 flex w-full items-center justify-center border-t-1 border-black py-3 dark:border-white">
+        <div className="border-t-1 mt-3 flex w-full items-center justify-center border-black py-3 dark:border-white">
           <p> Loading...</p>
         </div>
       ) : null}
       {isError ? (
-        <div className="mt-3 flex w-full items-center justify-center border-t-1 border-black py-3 dark:border-white ">
+        <div className="border-t-1 mt-3 flex w-full items-center justify-center border-black py-3 dark:border-white ">
           <p>Server Error! Try refrech page.</p>
         </div>
       ) : null}
@@ -197,7 +197,7 @@ function useGetRating(page: number) {
     fetchNextPage,
   } = api.waiter.getRatingDescription.useInfiniteQuery(
     {
-      limit: 5,
+      limit: 10,
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -215,18 +215,18 @@ function useGetRating(page: number) {
 
   useEffect(() => {
     setData((prevRate) => {
-      const newItem = rate?.pages[page]?.items;
+      const filteredItems = rate?.pages[page]?.items.filter(
+        (i) => i.stars !== 0,
+      );
 
-      if (newItem) {
-        return [...new Set([...prevRate, ...newItem])];
+      if (filteredItems) {
+        return [...new Set([...prevRate, ...filteredItems])];
       }
       return prevRate;
     });
   }, [page, rate]);
 
   const hasMore = rate?.pages[page]?.hasMore;
-
-  console.log(hasMore);
 
   useEffect(() => {
     if (hasMore !== undefined) {
