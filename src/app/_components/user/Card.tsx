@@ -9,12 +9,7 @@ import { useSession } from "next-auth/react";
 import { api } from "@/trpc/react";
 import { type UserPasses } from "@/server/api/routers/user";
 
-const fakeData = [
-  { name: "SOMENAME", color: "#03fce8", count: 5 },
-  { name: "SOMENAME", color: "#fc03ec", count: 8 },
-];
-
-export default function Card() {
+export default function Card({ company }: { company: string }) {
   const [show, setShow] = useState<number>();
   const [height, setHeight] = useState(0);
   const { data: session } = useSession();
@@ -27,12 +22,27 @@ export default function Card() {
     }
   };
 
-  const { data, isLoading } = api.user.getUserData.useQuery();
+  const { data, isLoading, refetch } = api.user.getUserData.useQuery();
 
   let passes: UserPasses[] = [];
   if (data && data) {
     passes = data as UserPasses[];
   }
+
+  // Implement automatically bonus Acc register
+
+  const { mutate, isLoading: passIsLoading } =
+    api.user.autoCreateBonusAcc.useMutation({
+      onSuccess: () => {
+        void refetch();
+      },
+    });
+
+  useEffect(() => {
+    if (!passes[0]?.points) {
+      mutate({ key: company });
+    }
+  }, [data]);
 
   useEffect(() => {
     calculateHeight();
@@ -77,7 +87,7 @@ export default function Card() {
         {passes.map((i, index) => (
           <div key={index} onClick={() => changePosition(index)}>
             <Pass
-              z={show === index ? fakeData.length : index}
+              z={show === index ? passes.length : index}
               t={index * 50}
               name={i.name}
               translate={
@@ -283,7 +293,7 @@ export function Pass({
           exit={{ opacity: 0 }}
         >
           <Link href={linkToGoogleW}>
-            <ButtonAddToGoogleWallet width={6/12}/>
+            <ButtonAddToGoogleWallet width={6 / 12} />
           </Link>
           <Link href={linkToMenu}>
             <Button className=" h-12 w-6/12 rounded-full bg-white text-lg text-black">

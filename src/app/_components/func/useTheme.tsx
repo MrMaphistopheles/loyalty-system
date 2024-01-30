@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 export function Body({
   children,
@@ -19,13 +19,15 @@ export function Body({
           : "light light:bg-[#ebfbff] text-black")
       }
     >
-      <Helmet>
-        {isDark ? (
-          <meta name="theme-color" content="#000" />
-        ) : (
-          <meta name="theme-color" content="#ebfbff" />
-        )}
-      </Helmet>
+      <HelmetProvider>
+        <Helmet>
+          {isDark ? (
+            <meta name="theme-color" content="#000" />
+          ) : (
+            <meta name="theme-color" content="#ebfbff" />
+          )}
+        </Helmet>
+      </HelmetProvider>
 
       {children}
     </body>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Avatar, Image } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/trpc/react";
-import { type Dishes } from "../../server/api/routers/user";
+import { type Dishes } from "@/server/api/routers/user";
 import {
   Modal,
   ModalContent,
@@ -12,7 +12,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import Authoraised from "../_components/app/Authoraised";
+import Authoraised from "@/app/_components/app/Authoraised";
 
 export default function Menu() {
   const [selected, setSelected] = useState("");

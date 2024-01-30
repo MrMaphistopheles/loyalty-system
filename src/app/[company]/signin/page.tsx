@@ -1,7 +1,8 @@
-import Register from "../_components/app/Register";
-export default function SignIn() {
+import SignInBtn from "@/app/_components/elements/SignInBtn";
+
+export default function SignIn({ params }: { params: { company: string } }) {
   return (
-    <div className="flex h-[100dvh] items-center justify-center  px-8">
+    <div className="flex h-full w-full items-center justify-center  ">
       <div
         style={{
           backgroundColor: "rgba(255, 255, 255, 0.06)",
@@ -78,7 +79,7 @@ export default function SignIn() {
           </svg>
         </div>
         <h1 className="text-xl">Вітаємо в bonusLite</h1>
-        <Register />
+        <SignInBtn company={params.company} />
       </div>
     </div>
   );

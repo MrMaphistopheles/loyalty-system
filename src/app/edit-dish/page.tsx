@@ -19,7 +19,7 @@ import {
   FileSizeValidator,
   ImageDimensionsValidator,
 } from "use-file-picker/validators";
-import Authoraised from "../_components/app/Authoraised";
+import Authoraised from "@/app/_components/app/Authoraised";
 
 export default function EditDish() {
   const searchPram = useSearchParams();
@@ -113,7 +113,7 @@ export default function EditDish() {
   };
 
   return (
-    <Authoraised role="MANAGER">
+    <Authoraised role="MANAGER" main={true}>
       {image.length > 0 ? (
         <Image
           onClick={openFilePicker}
@@ -230,14 +230,14 @@ function Loading() {
   return (
     <div className="glass flex w-full flex-col items-center justify-center gap-2 rounded-2xl px-3 py-4">
       <Skeleton className="w-full rounded-lg">
-        <div className="h-12 w-3/5 rounded-lg bg-default-200"></div>
+        <div className="bg-default-200 h-12 w-3/5 rounded-lg"></div>
       </Skeleton>
 
       <Skeleton className="w-full rounded-lg">
-        <div className="h-12 w-2/5 rounded-lg bg-default-300"></div>
+        <div className="bg-default-300 h-12 w-2/5 rounded-lg"></div>
       </Skeleton>
       <Skeleton className=" w-full rounded-lg">
-        <div className="h-28 rounded-lg bg-default-300"></div>
+        <div className="bg-default-300 h-28 rounded-lg"></div>
       </Skeleton>
     </div>
   );

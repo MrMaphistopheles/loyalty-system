@@ -6,8 +6,8 @@ import { Avatar, Button, ButtonGroup, Textarea } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { SvgBird } from "../_components/svg/SvgBird";
-import Authoraised from "../_components/app/Authoraised";
+import { SvgBird } from "@/app/_components/svg/SvgBird";
+import Authoraised from "@/app/_components/app/Authoraised";
 
 const items = [...Array(6).keys()].slice(1);
 

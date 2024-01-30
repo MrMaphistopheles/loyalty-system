@@ -6,7 +6,7 @@ import { getServerAuthSession } from "@/server/auth";
 import { TRPCReactProvider } from "@/trpc/react";
 import { UiProvider } from "@/app/_components/providers/UiProvider";
 import { Body } from "@/app/_components/func/useTheme";
-import { Bottom, ElementAnimation, Head } from "./_components/app/Layout";
+import { Bottom, ElementAnimation, Head } from "@/app/_components/app/Layout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,8 +24,10 @@ export const viewport = {
 
 export default async function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { company: string };
 }) {
   const session = await getServerAuthSession();
 
@@ -35,9 +37,15 @@ export default async function RootLayout({
         <TRPCReactProvider cookies={cookies().toString()} session={session}>
           <UiProvider>
             <div className="flex h-[100dvh] flex-col items-center justify-between">
-              <Head />
-              <ElementAnimation>{children}</ElementAnimation>
-              <Bottom />
+              {session?.user.role === "USER" ? (
+                <>{children}</>
+              ) : (
+                <>
+                  <Head company={params.company} />
+                  <ElementAnimation>{children}</ElementAnimation>
+                  <Bottom />
+                </>
+              )}
             </div>
           </UiProvider>
         </TRPCReactProvider>
@@ -45,5 +53,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-//bg-gradient-to-tr from-fuchsia-300 to-cyan-300

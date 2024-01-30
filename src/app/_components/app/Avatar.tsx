@@ -9,16 +9,20 @@ import {
 
 import { Avatar } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-export default function NavMenu() {
+export default function NavMenu({ company }: { company: string }) {
   const { data: session } = useSession();
   const image: string = session?.user?.image ?? "";
 
   const router = useRouter();
+  const url = `http://localhost:3000/${company}/signin`;
+
+  const handleSignOutforUser = async () => {
+    await signOut({ callbackUrl: url });
+  };
 
   const handleSignOut = async () => {
-    await signOut(); // Call the signOut function without passing any event object
+    await signOut();
   };
 
   if (session?.user.role === "WAITER") {
@@ -36,7 +40,7 @@ export default function NavMenu() {
 
               <DropdownItem
                 key="waiter-rating"
-                onClick={() => router.push("/waiter-rating")}
+                onClick={() => router.push(`/waiter-rating`)}
               >
                 <div className="flex items-center justify-start gap-2">
                   <svg
@@ -54,7 +58,7 @@ export default function NavMenu() {
 
               <DropdownItem
                 key="withdraw-request"
-                onClick={() => router.push("/withdraw-request")}
+                onClick={() => router.push(`/withdraw-request`)}
               >
                 <div className="flex items-center justify-start gap-2">
                   <svg
@@ -91,6 +95,33 @@ export default function NavMenu() {
     );
   }
 
+  if (session?.user.role === "USER") {
+    return (
+      <div className="flex w-full items-center justify-end p-3 dark:text-white">
+        {session?.user ? (
+          <Dropdown className="dark:bg-gray-900 dark:text-white">
+            <DropdownTrigger>
+              <Avatar src={image} />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem key="Signed">
+                Signed in as {session.user.email}
+              </DropdownItem>
+
+              <DropdownItem
+                key="LogOut"
+                className="text-danger"
+                color="danger"
+                onClick={handleSignOutforUser}
+              >
+                Log Out
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        ) : null}
+      </div>
+    );
+  }
   return (
     <div className="flex w-full items-center justify-end p-3 dark:text-white">
       {session?.user ? (

@@ -3,9 +3,9 @@
 import { useSearchParams } from "next/navigation";
 import { api } from "@/trpc/react";
 import { useEffect } from "react";
-import { Loading } from "../_components/waiter/Scaner";
+import { Loading } from "@/app/_components/waiter/Scaner";
 import { type Transaction } from "@prisma/client";
-import { SvgBird } from "../_components/svg/SvgBird";
+import { SvgBird } from "@/app/_components/svg/SvgBird";
 
 type TransactionObj = Omit<Transaction, "id">;
 type TransactionModifiedObj = Omit<TransactionObj, "additional_info">;

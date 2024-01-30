@@ -2,22 +2,32 @@
 import { useSession } from "next-auth/react";
 import Avatar from "./Avatar";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Badge } from "@nextui-org/react";
-import { UserRole } from "@prisma/client";
+import { type UserRole } from "@prisma/client";
 import { api } from "@/trpc/react";
 
+export function Head({ company }: { company: string }) {
+  const pathname: ("/" | undefined)[] = usePathname()
+    .split("")
+    .map((i) => {
+      if (i === "/") return i;
+      return;
+    })
+    .filter((i) => i != undefined);
 
-export function Head() {
-  const pathname: string[] = usePathname().split("");
   const { data: session } = useSession();
+
+  const router = useRouter();
+
+  console.log(company);
 
   if (session?.user) {
     return (
       <div className="flex w-full items-center justify-between ">
         {pathname?.length > 1 ? (
-          <Link href=".." className="px-4">
+          <div className="px-4" onClick={() => router.back()}>
             <svg
               className="h-6 w-6 text-gray-800 dark:text-white"
               aria-hidden="true"
@@ -27,15 +37,15 @@ export function Head() {
             >
               <path d="M8.766.566A2 2 0 0 0 6.586 1L1 6.586a2 2 0 0 0 0 2.828L6.586 15A2 2 0 0 0 10 13.586V2.414A2 2 0 0 0 8.766.566Z" />
             </svg>
-          </Link>
+          </div>
         ) : (
           <>
-            <Messages role={session.user.role} />
+            <Messages role={session.user.role} company={company} />
             <Money role={session.user.role} />
           </>
         )}
 
-        <Avatar />
+        <Avatar company={company} />
       </div>
     );
   }
@@ -78,7 +88,7 @@ export function Bottom() {
 function MenuForAdmin() {
   return (
     <div className="glass flex flex-row items-center justify-center gap-1 rounded-2xl">
-      <Link href="/">
+      <Link href={`/}`}>
         <div className="hover:blured rounded-2xl p-3">
           <svg
             className="h-6 w-6 text-slate-800 dark:text-white"
@@ -122,7 +132,7 @@ function MenuForAdmin() {
 function MenuForManager() {
   return (
     <div className="glass flex flex-row items-center justify-center gap-1 rounded-2xl">
-      <Link href="/">
+      <Link href={`/`}>
         <div className="hover:blured rounded-2xl p-3">
           <svg
             className="h-6 w-6 text-slate-800 dark:text-white"
@@ -136,7 +146,7 @@ function MenuForManager() {
         </div>
       </Link>
 
-      <Link href="/bonus-setting">
+      <Link href={`/bonus-setting`}>
         <div className="hover:blured rounded-2xl p-3">
           <svg
             className="h-6 w-6 text-gray-800 dark:text-white"
@@ -149,7 +159,7 @@ function MenuForManager() {
           </svg>
         </div>
       </Link>
-      <Link href="/pass-setting">
+      <Link href={`/pass-setting`}>
         <div className="hover:blured rounded-2xl p-3">
           <svg
             className="h-6 w-6 text-gray-800 dark:text-white"
@@ -162,7 +172,7 @@ function MenuForManager() {
           </svg>
         </div>
       </Link>
-      <Link href="/menu-setting">
+      <Link href={`/menu-setting`}>
         <div className="hover:blured rounded-2xl p-3">
           <svg
             className="h-6 w-6 text-gray-800 dark:text-white"
@@ -179,28 +189,32 @@ function MenuForManager() {
   );
 }
 
-function Messages({ role }: { role: UserRole | null }) {
+function Messages({
+  role,
+  company,
+}: {
+  role: UserRole | null;
+  company: string;
+}) {
   const { data, isLoading } = api.user.getRates.useQuery();
   const messageCount = data?.filter((i) => i.stars === 0);
 
   if (role === "USER") {
     if (isLoading) {
       return (
-        <Link href="/messages" className="px-4">
-          <svg
-            className="h-6 w-6 text-black dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 18"
-          >
-            <path d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3.546l3.2 3.659a1 1 0 0 0 1.506 0L13.454 14H18a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-8 10H5a1 1 0 0 1 0-2h5a1 1 0 1 1 0 2Zm5-4H5a1 1 0 0 1 0-2h10a1 1 0 1 1 0 2Z" />
-          </svg>
-        </Link>
+        <svg
+          className="h-6 w-6 text-black dark:text-white"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 18"
+        >
+          <path d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3.546l3.2 3.659a1 1 0 0 0 1.506 0L13.454 14H18a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-8 10H5a1 1 0 0 1 0-2h5a1 1 0 1 1 0 2Zm5-4H5a1 1 0 0 1 0-2h10a1 1 0 1 1 0 2Z" />
+        </svg>
       );
     }
     return (
-      <Link href="/messages" className="px-4">
+      <Link href={`/${company}/messages`} className="px-4">
         {messageCount?.length === 0 ? (
           <svg
             className="h-6 w-6 text-black dark:text-white"
@@ -234,11 +248,9 @@ function Messages({ role }: { role: UserRole | null }) {
 }
 
 function Money({ role }: { role: UserRole | null }) {
-  const { data, isLoading } = api.waiter.getTips.useQuery();
-
   if (role === "WAITER") {
     return (
-      <Link href="/tips" className="px-4">
+      <Link href={`/tips`} className="px-4">
         <svg
           className="h-6 w-6 text-black dark:text-white"
           aria-hidden="true"

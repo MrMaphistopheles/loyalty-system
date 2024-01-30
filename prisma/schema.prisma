@@ -60,14 +60,15 @@ model User {
     bonusSystem     bonusSystem[]
     purchaseHistory purchaseHistory[]
 
-    createdBy  User[]       @relation(name: "ADMIN")
-    created    User[]       @relation(name: "ADMIN")
-    Theme      Theme[]
-    menu       menu[]
-    rate       Rate[]
-    tips       tips[]
-    tipBalance tipBalance[]
-    withdraw   withdraw[]
+    createdBy   User[]        @relation(name: "ADMIN")
+    created     User[]        @relation(name: "ADMIN")
+    Theme       Theme[]
+    menu        menu[]
+    rate        Rate[]
+    tips        tips[]
+    tipBalance  tipBalance[]
+    withdraw    withdraw[]
+    company_url company_url[]
 }
 
 model VerificationToken {
@@ -86,6 +87,13 @@ model bonusAcc {
     user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
     createdAt       DateTime          @default(now())
     purchaseHistory purchaseHistory[]
+}
+
+model company_url {
+    id       String @id @default(cuid())
+    path_key String
+    userId   String
+    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model bonusSystem {
@@ -173,7 +181,7 @@ model tips {
     createdAt   DateTime      @default(now())
     orderStatus String
     transaction Transaction[]
-    // waiter connections 
+    // waiter connections
     User        User?         @relation(fields: [userId], references: [id])
     userId      String?
     Rate        Rate          @relation(fields: [rateId], references: [id])

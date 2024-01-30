@@ -1,6 +1,6 @@
 import SignInBtn from "@/app/_components/elements/SignInBtn";
-import Image from "next/image";
-export default function SignIn() {
+
+export default function SignIn({ params }: { params: { company: string } }) {
   return (
     <div className="flex h-full w-full items-center justify-center  ">
       <div
@@ -79,7 +79,7 @@ export default function SignIn() {
           </svg>
         </div>
         <h1 className="text-xl">Вітаємо в bonusLite</h1>
-        <SignInBtn />
+        <SignInBtn main={true} />
       </div>
     </div>
   );

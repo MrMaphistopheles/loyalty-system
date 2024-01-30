@@ -1,25 +1,18 @@
 import Authoraised from "@/app/_components/app/Authoraised";
 import DashBord from "@/app/_components/admin/DashBord";
-import Card from "./_components/user/Card";
-import Scaner from "./_components/waiter/Scaner";
+import Scaner from "@/app/_components/waiter/Scaner";
 
-export default async function Home() {
+export default function Home() {
   return (
     <>
-      <Authoraised role="ADMIN">
+      <Authoraised role="ADMIN" main={true}>
         <DashBord role="admin" />
       </Authoraised>
-      <Authoraised role="USER">
-        <Card />
-      </Authoraised>
-      <Authoraised role="MANAGER">
+      <Authoraised role="MANAGER" main={true}>
         <DashBord role="manager" />
       </Authoraised>
-      <Authoraised role="WAITER">
+      <Authoraised role="WAITER" main={true}>
         <Scaner />
-      </Authoraised>
-      <Authoraised role="NEW">
-        <div>hi</div>
       </Authoraised>
     </>
   );

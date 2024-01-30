@@ -2,13 +2,20 @@
 import { Button } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 
-//const url = "https://word-q5q0.onrender.com/"
-const url = "http://localhost:3000/";
+export default function SignInBtn({
+  company,
+  main,
+}: {
+  company?: string;
+  main?: boolean;
+}) {
+  const url =
+    main === true
+      ? `http://localhost:3000`
+      : `http://localhost:3000/${company}`;
 
-export default function SignInBtn() {
   return (
     <Button
-
       size="lg"
       className="w-full bg-black text-white"
       onClick={() => signIn("google", { callbackUrl: url })}

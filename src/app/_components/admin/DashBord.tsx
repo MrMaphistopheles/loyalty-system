@@ -161,7 +161,7 @@ export default function DashBord({ role }: { role: Role }) {
           >
             {created ? (
               created.map((i) => (
-                <ListboxItem key={i.id} variant="solid">
+                <ListboxItem key={i.id} variant="solid" textValue="wokers">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center justify-center gap-2">
                       <Avatar
@@ -197,7 +197,9 @@ export default function DashBord({ role }: { role: Role }) {
                 </ListboxItem>
               ))
             ) : (
-              <ListboxItem key={404}>No items</ListboxItem>
+              <ListboxItem key={404} textValue="no items">
+                No items
+              </ListboxItem>
             )}
           </Listbox>
         )}
@@ -228,10 +230,10 @@ function SkeletonFor() {
       {arr.map((i) => (
         <div className="flex w-full items-center justify-between" key={i}>
           <Skeleton className="w-3/5 rounded-lg">
-            <div className="h-4 w-3/5 rounded-lg bg-default-200"></div>
+            <div className="bg-default-200 h-4 w-3/5 rounded-lg"></div>
           </Skeleton>
           <Skeleton className="w-10 rounded-lg">
-            <div className="h-10 w-3/5 rounded-lg bg-default-200"></div>
+            <div className="bg-default-200 h-10 w-3/5 rounded-lg"></div>
           </Skeleton>
         </div>
       ))}

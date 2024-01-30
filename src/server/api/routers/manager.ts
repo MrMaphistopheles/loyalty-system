@@ -362,4 +362,24 @@ export const managerRouter = createTRPCRouter({
       });
       return { msg: 200 };
     }),
+
+  getPathKey: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.company_url.findFirst({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+  }),
+  editPathKey: protectedProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.company_url.updateMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        data: {
+          path_key: input.key,
+        },
+      });
+    }),
 });

@@ -102,94 +102,51 @@ const TransactionSchema = z.object({
 });
 
 export const userRouter = createTRPCRouter({
-  getUserData: protectedProcedure.query(async ({ ctx }) => {
-    const user = await ctx.db.user.findUnique({
-      where: {
-        id: ctx.session.user.id,
-      },
-      include: {
-        bonusAcc: true,
-      },
-    });
-
-    let companyId: string[] = [];
-    if (user && user.bonusAcc) {
-      companyId = user.bonusAcc.map((i) =>
-        i.companyId !== null ? i.companyId : "",
-      );
-    } else {
-      companyId = [];
-    }
-
-    const companyAcc = await ctx.db.user.findMany({
-      where: {
-        id: {
-          in: companyId,
-        },
-      },
-      include: {
-        Theme: true,
-        bonusSystem: true,
-      },
-    });
-
-    const data = companyAcc.map((i) => {
-      const match = user?.bonusAcc.find((f) => f.companyId === i.id);
-      if (match) {
-        return { ...i, ...{ points: match.balance } };
-      } else {
-        return companyAcc;
-      }
-    });
-
-    return data;
-  }),
-  getCompany: protectedProcedure.query(async ({ ctx }) => {
-    const company = await ctx.db.user.findMany({
-      where: {
-        role: "MANAGER",
-      },
-      include: {
-        Theme: true,
-        bonusSystem: true,
-        created: true,
-      },
-    });
-
-    let data: Data[] = [];
-    company.forEach((e) => {
-      data.push({
-        id: e.id,
-        email: e.email,
-        name: e.name,
-        image: e.Theme[0]?.image,
-        created: e.created.map((i) => i.id),
-      });
-    });
-    const arr = data.filter((i) => !i.created?.includes(ctx.session.user.id));
-    return arr;
-  }),
-  addPass: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      return await ctx.db.user.update({
+  getUserData: protectedProcedure
+    //.input(z.object({ key: z.string() }))
+    .query(async ({ ctx }) => {
+      const user = await ctx.db.user.findUnique({
         where: {
           id: ctx.session.user.id,
         },
-        data: {
-          bonusAcc: {
-            create: {
-              companyId: input.id,
-            },
-          },
-          createdBy: {
-            connect: {
-              id: input.id,
-            },
-          },
+        include: {
+          bonusAcc: true,
         },
       });
+
+      let companyId: string[] = [];
+      if (user && user.bonusAcc) {
+        companyId = user.bonusAcc.map((i) =>
+          i.companyId !== null ? i.companyId : "",
+        );
+      } else {
+        companyId = [];
+      }
+
+      const companyAcc = await ctx.db.user.findMany({
+        where: {
+          id: {
+            in: companyId,
+          },
+        },
+        include: {
+          Theme: true,
+          bonusSystem: true,
+        },
+      });
+
+      const data = companyAcc.map((i) => {
+        const match = user?.bonusAcc.find((f) => f.companyId === i.id);
+        if (match) {
+          return { ...i, ...{ points: match.balance } };
+        } else {
+          return companyAcc;
+        }
+      });
+
+      return data;
     }),
+
   getCategorys: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -210,6 +167,7 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
   getDishes: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -404,7 +362,7 @@ export const userRouter = createTRPCRouter({
           userId: findWaiter?.userId,
         },
       });
-      
+
       const tipBalanceUpdate = await ctx.db.tipBalance.updateMany({
         where: {
           userId: findWaiter?.userId,
@@ -468,6 +426,32 @@ export const userRouter = createTRPCRouter({
               verification_status: input.verification_status,
             },
           },
+        },
+      });
+    }),
+
+  autoCreateBonusAcc: protectedProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const pathKey = await ctx.db.company_url.findFirst({
+        where: {
+          path_key: input.key,
+        },
+      });
+
+      const bonusAcc = await ctx.db.bonusAcc.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          companyId: pathKey.userId,
+        },
+      });
+
+      if (bonusAcc) return { msg: "this account exist" };
+
+      return await ctx.db.bonusAcc.create({
+        data: {
+          userId: ctx.session.user.id,
+          companyId: pathKey.userId,
         },
       });
     }),

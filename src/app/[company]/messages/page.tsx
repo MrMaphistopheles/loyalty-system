@@ -4,7 +4,7 @@ import { Avatar, Button, ScrollShadow } from "@nextui-org/react";
 import React from "react";
 import { api } from "@/trpc/react";
 import Link from "next/link";
-import Authoraised from "../_components/app/Authoraised";
+import Authoraised from "@/app/_components/app/Authoraised";
 
 export default function Messages() {
   const { data: idata } = api.user.getRatesInfo.useQuery();
