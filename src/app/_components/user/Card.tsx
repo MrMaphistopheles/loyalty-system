@@ -9,6 +9,10 @@ import { useSession } from "next-auth/react";
 import { api } from "@/trpc/react";
 import { type UserPasses } from "@/server/api/routers/user";
 
+const calculateCount = (gift: number, points: number) => {
+  return gift - points;
+};
+
 export default function Card({ company }: { company: string }) {
   const [show, setShow] = useState<number>();
   const [height, setHeight] = useState(0);
@@ -22,12 +26,9 @@ export default function Card({ company }: { company: string }) {
     }
   };
 
-  const { data, isLoading, refetch } = api.user.getUserData.useQuery();
-
-  let passes: UserPasses[] = [];
-  if (data && data) {
-    passes = data as UserPasses[];
-  }
+  const { data, refetch, isSuccess } = api.user.getUserDataT.useQuery({
+    key: company,
+  });
 
   // Implement automatically bonus Acc register
 
@@ -39,8 +40,8 @@ export default function Card({ company }: { company: string }) {
     });
 
   useEffect(() => {
-    if (!passes[0]?.points) {
-      mutate({ key: company });
+    if (data && data[0]) {
+      if (!data[0]?.points) mutate({ key: company });
     }
   }, [data]);
 
@@ -59,55 +60,29 @@ export default function Card({ company }: { company: string }) {
   return (
     <div className="flex w-full flex-col items-center justify-end gap-3">
       <div className="relative w-full">
-        {show === undefined ? (
-          <Link href="/add-card">
-            <motion.div
-              initial={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="glass absolute flex h-[15em] w-full flex-col items-center justify-center rounded-3xl"
-              style={{
-                transform: `translate(0, -200px)`,
-              }}
-            >
-              <svg
-                className="h-28 w-28 text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.546.5a9.5 9.5 0 1 0 9.5 9.5 9.51 9.51 0 0 0-9.5-9.5ZM13.788 11h-3.242v3.242a1 1 0 1 1-2 0V11H5.304a1 1 0 0 1 0-2h3.242V5.758a1 1 0 0 1 2 0V9h3.242a1 1 0 1 1 0 2Z" />
-              </svg>
-            </motion.div>
-          </Link>
-        ) : null}
-
-        {passes.map((i, index) => (
-          <div key={index} onClick={() => changePosition(index)}>
-            <Pass
-              z={show === index ? passes.length : index}
-              t={index * 50}
-              name={i.name}
-              translate={
-                show === index ? -(height / 12 + index * 2.5) : height / 13
-              }
-              show={show === index ? true : false}
-              userName={session?.user.name ?? "s"}
-              countOf={
-                i.bonusSystem[0]?.gift !== undefined && i.points !== null
-                  ? i.bonusSystem[0].gift - i.points
-                  : 0
-              }
-              color={i.Theme[0]?.color}
-              icon={i.Theme[0]?.image}
-              linkToGoogleW="/some"
-              linkToMenu={`/menu?id=${i.id}`}
-              qrVal={session?.user.id ?? ""}
-            />
-          </div>
-        ))}
+        {data &&
+          data[0]?.points &&
+          data.map((i, index) => (
+            <div key={index} onClick={() => changePosition(index)}>
+              <Pass
+                z={index}
+                name={i?.name ?? ""}
+                translate={show === index ? -(height / 15) : height / 12}
+                show={show === index ? true : false}
+                userName={session?.user.name ?? "s"}
+                countOf={
+                  i.bonusSystem && i.bonusSystem[0]?.gift && i.points
+                    ? calculateCount(i.bonusSystem[0]?.gift, i.points)
+                    : 0
+                }
+                color={i.Theme && i.Theme[0]?.color}
+                icon={i.Theme && i.Theme[0]?.image}
+                linkToGoogleW={`/${company}/indevelopment`}
+                linkToMenu={`/${company}/menu?id=${i.id}`}
+                qrVal={session?.user.id ?? ""}
+              />
+            </div>
+          ))}
       </div>
     </div>
   );
@@ -205,7 +180,7 @@ function ButtonAddToGoogleWallet({ width }: { width: number }) {
 
 export function Pass({
   z,
-  t,
+  //t,
   name,
   translate,
   show,
@@ -221,7 +196,7 @@ export function Pass({
   onClick,
 }: {
   z: number;
-  t: number;
+  // t: number;
   name: string;
   translate: number;
   show?: boolean;
@@ -243,7 +218,7 @@ export function Pass({
       className="flex w-full flex-col items-center justify-center gap-3"
       style={{
         zIndex: `${z}`,
-        top: `${t}px`,
+        /// top: `${t}px`,
         transform: `translate(0, ${transition}%)`,
         transition: `0.8s linear`,
         position: position === undefined ? "absolute" : position,

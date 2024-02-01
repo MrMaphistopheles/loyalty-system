@@ -7,7 +7,7 @@ import {
 } from "@/server/api/trpc";
 import { UserRole } from "@prisma/client";
 import { Payment } from "@/server/func/paymant";
-import { v4 as uuidv4, v4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 type Data = {
   id: string | null;
@@ -143,6 +143,37 @@ export const userRouter = createTRPCRouter({
           return companyAcc;
         }
       });
+
+      return data;
+    }),
+
+  getUserDataT: protectedProcedure
+    .input(z.object({ key: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const getComapnyId = await ctx.db.company_url.findFirst({
+        where: {
+          path_key: input.key,
+        },
+      });
+
+      const getBonusAcc = await ctx.db.bonusAcc.findFirst({
+        where: {
+          companyId: getComapnyId?.userId,
+          userId: ctx.session.user.id,
+        },
+      });
+
+      const companyAcc = await ctx.db.user.findFirst({
+        where: {
+          id: getComapnyId?.userId,
+        },
+        include: {
+          Theme: true,
+          bonusSystem: true,
+        },
+      });
+
+      const data = [{ points: getBonusAcc?.balance, ...companyAcc }];
 
       return data;
     }),
