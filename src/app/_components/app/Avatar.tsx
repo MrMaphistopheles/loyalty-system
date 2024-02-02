@@ -122,29 +122,30 @@ export default function NavMenu({ company }: { company: string }) {
       </div>
     );
   }
-  return (
-    <div className="flex w-full items-center justify-end p-3 dark:text-white">
-      {session?.user ? (
-        <Dropdown className="dark:bg-gray-900 dark:text-white">
-          <DropdownTrigger>
-            <Avatar src={image} />
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Static Actions">
-            <DropdownItem key="Signed">
-              Signed in as {session.user.email}
-            </DropdownItem>
-
-            <DropdownItem
-              key="LogOut"
-              className="text-danger"
-              color="danger"
-              onClick={handleSignOut}
-            >
-              Log Out
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      ) : null}
-    </div>
-  );
+  if (session?.user.role === "ADMIN" || session?.user.role === "MANAGER") {
+    return (
+      <div className="flex w-full items-center justify-end p-3 dark:text-white">
+        {session?.user ? (
+          <Dropdown className="dark:bg-gray-900 dark:text-white">
+            <DropdownTrigger>
+              <Avatar src={image} />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem key="Signed">
+                Signed in as {session.user.email}
+              </DropdownItem>
+              <DropdownItem
+                key="LogOut"
+                className="text-danger"
+                color="danger"
+                onClick={handleSignOut}
+              >
+                Log Out
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        ) : null}
+      </div>
+    );
+  }
 }

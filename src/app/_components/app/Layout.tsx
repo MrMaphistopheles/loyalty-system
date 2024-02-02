@@ -20,8 +20,6 @@ const manifest = {
   orientation: "portrait",
 };
 
-
-
 export function Head({ company }: { company: string }) {
   const pathname: ("/" | undefined)[] = usePathname()
     .split("")
@@ -85,7 +83,7 @@ export function Bottom() {
   return (
     <>
       {session?.user.role === "USER" ? null : (
-        <div className="static bottom-0 flex h-20 w-full items-center justify-center p-6">
+        <div className="flex h-20 w-full items-center justify-center pb-7">
           {session?.user.role === "ADMIN" ? (
             <MenuForAdmin />
           ) : session?.user.role === "MANAGER" ? (
@@ -194,6 +192,24 @@ function MenuForManager() {
             viewBox="0 0 16 20"
           >
             <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z" />
+          </svg>
+        </div>
+      </Link>
+
+      <Link href={`/icon-setting`}>
+        <div className="hover:blured rounded-2xl p-3">
+          <svg
+            className="h-6 w-6 text-gray-800 dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fillRule="evenodd"
+              d="M9 2.2V7H4.2l.4-.5 3.9-4 .5-.3Zm2-.2v5a2 2 0 0 1-2 2H4v11c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7Zm.4 9.6a1 1 0 0 0-1.8 0l-2.5 6A1 1 0 0 0 8 19h8a1 1 0 0 0 .9-1.4l-2-4a1 1 0 0 0-1.7-.2l-.5.7-1.3-2.5ZM13 9.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z"
+              clipRule="evenodd"
+            />
           </svg>
         </div>
       </Link>

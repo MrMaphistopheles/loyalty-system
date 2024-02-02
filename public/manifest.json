@@ -3,11 +3,11 @@
   "short_name": "Bonus App",
   "icons": [
     {
-      "src": "https://storage.googleapis.com/bonuslite1/192.png",
+      "src": "/192.png",
       "sizes": "192x192"
     }
   ],
-  "theme_color": "#FFFFFF",
+
   "background_color": "#FFFFFF",
   "start_url": "",
   "display": "standalone",
