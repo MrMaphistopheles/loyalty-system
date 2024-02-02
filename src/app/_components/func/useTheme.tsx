@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 export function Body({
@@ -15,8 +16,8 @@ export function Body({
       className={
         `${font}` +
         (isDark
-          ? "dark text-white dark:bg-black"
-          : "light light:bg-[#ebfbff] text-black")
+          ? "text-white dark dark:bg-black"
+          : "text-black light light:bg-[#ebfbff]")
       }
     >
       <HelmetProvider>
@@ -28,7 +29,6 @@ export function Body({
           )}
         </Helmet>
       </HelmetProvider>
-
       {children}
     </body>
   );

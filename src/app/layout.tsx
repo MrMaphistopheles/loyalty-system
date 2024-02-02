@@ -8,18 +8,20 @@ import { UiProvider } from "@/app/_components/providers/UiProvider";
 import { Body } from "@/app/_components/func/useTheme";
 import { Bottom, ElementAnimation, Head } from "@/app/_components/app/Layout";
 
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
 export const metadata = {
-  manifest: "/manifest.json",
   title: "Bonus App",
   description: "Loyalty system",
+
 };
 export const viewport = {
   maximumScale: 1,
+  themeColor: "#fff"
 };
 
 export default async function RootLayout({
