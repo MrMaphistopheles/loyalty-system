@@ -473,7 +473,7 @@ export const userRouter = createTRPCRouter({
       const bonusAcc = await ctx.db.bonusAcc.findFirst({
         where: {
           userId: ctx.session.user.id,
-          companyId: pathKey.userId,
+          companyId: pathKey?.userId,
         },
       });
 
@@ -482,7 +482,7 @@ export const userRouter = createTRPCRouter({
       return await ctx.db.bonusAcc.create({
         data: {
           userId: ctx.session.user.id,
-          companyId: pathKey.userId,
+          companyId: pathKey?.userId,
         },
       });
     }),
