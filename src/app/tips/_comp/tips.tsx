@@ -109,7 +109,7 @@ export default function Tips() {
         )}
       </div>
       <Link
-        href={`/${company}/withdraw`}
+        href={`/withdraw`}
         className="flex w-full items-center justify-center"
       >
         <Button

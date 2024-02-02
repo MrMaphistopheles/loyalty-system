@@ -180,7 +180,7 @@ function ButtonAddToGoogleWallet({ width }: { width: number }) {
 
 export function Pass({
   z,
-  //t,
+  t,
   name,
   translate,
   show,
@@ -196,7 +196,7 @@ export function Pass({
   onClick,
 }: {
   z: number;
-  // t: number;
+  t?: number;
   name: string;
   translate: number;
   show?: boolean;
@@ -218,7 +218,7 @@ export function Pass({
       className="flex w-full flex-col items-center justify-center gap-3"
       style={{
         zIndex: `${z}`,
-        /// top: `${t}px`,
+        top: `${t}px`,
         transform: `translate(0, ${transition}%)`,
         transition: `0.8s linear`,
         position: position === undefined ? "absolute" : position,
