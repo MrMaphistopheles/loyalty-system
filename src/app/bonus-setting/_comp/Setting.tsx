@@ -146,9 +146,9 @@ export default function Setting() {
         <div className="glass flex w-full flex-col items-center justify-center gap-2 rounded-2xl px-8  py-5">
           <h1 className="py-2 text-lg">Посилання для реєстрації клієнтів.</h1>
           {edit ? (
-            <EditPathKey path={pathData?.path_key} refech={refetchPath} />
+            <EditPathKey path={pathData?.path_key ?? ""} refech={refetchPath} />
           ) : (
-            <Path onClick={() => setEdit(true)} path={pathData?.path_key} />
+            <Path onClick={() => setEdit(true)} path={pathData?.path_key ?? ""} />
           )}
 
           <div className="my-2 rounded-lg bg-white p-3">

@@ -60,29 +60,29 @@ export default function Card({ company }: { company: string }) {
   return (
     <div className="flex w-full flex-col items-center justify-end gap-3">
       <div className="relative w-full">
-        {data &&
-          data[0]?.points &&
-          data.map((i, index) => (
-            <div key={index} onClick={() => changePosition(index)}>
-              <Pass
-                z={index}
-                name={i?.name ?? ""}
-                translate={show === index ? -(height / 15) : height / 12}
-                show={show === index ? true : false}
-                userName={session?.user.name ?? "s"}
-                countOf={
-                  i.bonusSystem && i.bonusSystem[0]?.gift && i.points
-                    ? calculateCount(i.bonusSystem[0]?.gift, i.points)
-                    : 0
-                }
-                color={i.Theme && i.Theme[0]?.color}
-                icon={i.Theme && i.Theme[0]?.image}
-                linkToGoogleW={`/${company}/indevelopment`}
-                linkToMenu={`/${company}/menu?id=${i.id}`}
-                qrVal={session?.user.id ?? ""}
-              />
-            </div>
-          ))}
+        {data && data[0]?.points
+          ? data.map((i, index) => (
+              <div key={index} onClick={() => changePosition(index)}>
+                <Pass
+                  z={index}
+                  name={i?.name ?? ""}
+                  translate={show === index ? -(height / 15) : height / 12}
+                  show={show === index ? true : false}
+                  userName={session?.user.name ?? "s"}
+                  countOf={
+                    i.bonusSystem && i.bonusSystem[0]?.gift && i.points
+                      ? calculateCount(i.bonusSystem[0]?.gift, i.points)
+                      : 0
+                  }
+                  color={i.Theme && i.Theme[0]?.color}
+                  icon={i.Theme && i.Theme[0]?.image}
+                  linkToGoogleW={`/${company}/indevelopment`}
+                  linkToMenu={`/${company}/menu?id=${i.id}`}
+                  qrVal={session?.user.id ?? ""}
+                />
+              </div>
+            ))
+          : null}
       </div>
     </div>
   );
