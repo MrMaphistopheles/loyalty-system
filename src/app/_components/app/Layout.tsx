@@ -83,7 +83,7 @@ export function Bottom() {
   return (
     <>
       {session?.user.role === "USER" ? null : (
-        <div className="flex h-20 w-full items-center justify-center pb-7">
+        <div className="flex h-20 w-full items-center justify-center pb-4">
           {session?.user.role === "ADMIN" ? (
             <MenuForAdmin />
           ) : session?.user.role === "MANAGER" ? (

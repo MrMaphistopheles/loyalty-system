@@ -23,7 +23,7 @@ export default function page() {
   const { data, isLoading, refetch, isSuccess } =
     api.manager.loadTheme.useQuery();
 
-  console.log(data);
+  //console.log(data);
 
   const { mutate, isLoading: upLoading } = api.manager.updateTheme.useMutation({
     onSuccess: () => {
