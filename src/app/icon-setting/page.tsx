@@ -14,17 +14,22 @@ export default async function Page() {
       },
       select: {
         path_key: true,
+        icons: true,
       },
     });
 
-    return pathKey?.path_key;
+    return pathKey;
   }
+
+  const key = await getUserKeyPath();
+  console.log();
 
   return (
     <>
       <h1 className="text-center text-lg">
         Іконка вашого застусунку в смартфоні користувача буде виглядати ось так.
       </h1>
+
       <div
         className="flex h-40 w-full flex-col items-center justify-start border-8 border-b-1  border-white bg-gray-300"
         style={{
@@ -70,7 +75,7 @@ export default async function Page() {
         </div>
         <div className="flex h-32 w-full items-center justify-center gap-4">
           <Image
-            src={`https://storage.googleapis.com/bonuslite1/${await getUserKeyPath()}.192.png`}
+            src={`${key?.icons[0]?.size_96}`}
             alt="Company icon"
             width={64}
             height={64}
@@ -85,7 +90,7 @@ export default async function Page() {
         Заватажте іконку зі однаковим співвідношенням сторін та за розміром не
         більше 512х512 пікселів.
       </p>
-      <UploadIcon pathKey={await getUserKeyPath()} />
+      <UploadIcon pathKey={key?.path_key} />
     </>
   );
 }

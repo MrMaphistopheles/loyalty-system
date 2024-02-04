@@ -18,7 +18,7 @@ export default function UploadIcon({
     multiple: false,
     validators: [
       new FileAmountLimitValidator({ max: 1 }),
-      new FileTypeValidator(["jpg", "png"]),
+      new FileTypeValidator(["jpeg", "png"]),
       new FileSizeValidator({ maxFileSize: 50 * 1024 * 1024 /* 50 MB */ }),
       new ImageDimensionsValidator({
         maxHeight: 512, // in pixels

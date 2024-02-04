@@ -363,6 +363,31 @@ export const managerRouter = createTRPCRouter({
       return { msg: 200 };
     }),
 
+  createPathKey: protectedProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const pathKey = await ctx.db.company_url.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        select: {
+          path_key: true,
+        },
+      });
+
+      if (pathKey?.path_key) return { msg: "path exist" };
+
+      return await ctx.db.company_url.create({
+        data: {
+          path_key: input.key,
+          userId: ctx.session.user.id,
+          icons: {
+            create: {},
+          },
+        },
+      });
+    }),
+
   getPathKey: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.company_url.findFirst({
       where: {

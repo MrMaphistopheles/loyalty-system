@@ -24,8 +24,6 @@ const arr = () => {
 };
 
 export default function Setting() {
-  const { data: session } = useSession();
-
   const [items, setItems] = useState<Arr[]>();
   const [value, setValue] = useState<number>();
   const [edit, setEdit] = useState(false);
@@ -148,7 +146,7 @@ export default function Setting() {
           {edit ? (
             <EditPathKey path={pathData?.path_key ?? ""} refech={refetchPath} />
           ) : (
-            <Path onClick={() => setEdit(true)} path={pathData?.path_key ?? ""} />
+            <Path onClick={() => setEdit(true)} path={pathData?.path_key} />
           )}
 
           <div className="my-2 rounded-lg bg-white p-3">
@@ -186,11 +184,16 @@ function EditPathKey({ path, refech }: { path: string; refech: () => void }) {
       void refech();
     },
   });
+  const { mutate: createKey, isLoading: loadingKey } =
+    api.manager.createPathKey.useMutation({
+      onSuccess: () => {
+        void refech();
+      },
+    });
 
   const handleMutation = () => {
-    mutate({
-      key: input,
-    });
+    if (!path) createKey({ key: input });
+    if (path) mutate({ key: input });
   };
   return (
     <div className="flex w-full items-center justify-normal gap-2">
@@ -206,7 +209,7 @@ function EditPathKey({ path, refech }: { path: string; refech: () => void }) {
         className="bg-black dark:bg-white dark:text-black"
         size="lg"
         onClick={handleMutation}
-        isLoading={isLoading}
+        isLoading={isLoading || loadingKey}
       >
         <svg
           className="h-6 w-6 text-white dark:text-black"
@@ -228,7 +231,13 @@ function EditPathKey({ path, refech }: { path: string; refech: () => void }) {
   );
 }
 
-function Path({ onClick, path }: { onClick: () => void; path: string }) {
+function Path({
+  onClick,
+  path,
+}: {
+  onClick: () => void;
+  path: string | undefined;
+}) {
   const [copy, setCopy] = useState(false);
   const copyText = useRef<HTMLInputElement | null>(null);
 
@@ -249,7 +258,7 @@ function Path({ onClick, path }: { onClick: () => void; path: string }) {
       <Input
         size="sm"
         ref={copyText}
-        value={`http://localhost:3000/${path}`}
+        value={!path ? "Створіть посилання" : `http://localhost:3000/${path}`}
         variant="bordered"
       />
 
