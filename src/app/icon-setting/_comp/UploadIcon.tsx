@@ -7,6 +7,7 @@ import {
   ImageDimensionsValidator,
 } from "use-file-picker/validators";
 import { Button } from "@nextui-org/react";
+import { api } from "@/trpc/react";
 export default function UploadIcon({
   pathKey,
 }: {
@@ -21,11 +22,27 @@ export default function UploadIcon({
       new FileTypeValidator(["jpeg", "png"]),
       new FileSizeValidator({ maxFileSize: 50 * 1024 * 1024 /* 50 MB */ }),
       new ImageDimensionsValidator({
-        maxHeight: 512, // in pixels
-        maxWidth: 512,
+        maxHeight: 1000,
+        maxWidth: 1000,
+        minHeight: 512,
+        minWidth: 512,
       }),
     ],
   });
+
+  const { mutate, isLoading, isError, error } =
+    api.manager.createResizedImage.useMutation();
+
+  const handleUpload = () => {
+    if (filesContent[0]?.content) {
+      mutate({ base64: filesContent[0]?.content, name: filesContent[0].name });
+    }
+  };
+
+  console.log(filesContent);
+  console.log(isLoading);
+  console.log("isError", isError);
+  console.log("error", error);
 
   return (
     <div className="flex w-full items-center justify-center gap-2">
@@ -36,7 +53,13 @@ export default function UploadIcon({
       >
         Вибрати
       </Button>
-      <Button isIconOnly className="bg-black  dark:bg-white " size="lg">
+      <Button
+        isIconOnly
+        className="bg-black  dark:bg-white "
+        size="lg"
+        onClick={handleUpload}
+        isLoading={isLoading}
+      >
         <svg
           className="h-6 w-6 text-white dark:text-black"
           aria-hidden="true"

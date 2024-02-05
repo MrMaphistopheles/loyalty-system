@@ -88,7 +88,7 @@ export default async function Page() {
       </div>
       <p className="text-center text-lg">
         Заватажте іконку зі однаковим співвідношенням сторін та за розміром не
-        більше 512х512 пікселів.
+        менше 512х512 пікселів та не більше 1000х1000 пікселів.
       </p>
       <UploadIcon pathKey={key?.path_key} />
     </>

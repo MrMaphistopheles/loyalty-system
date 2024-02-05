@@ -41,6 +41,7 @@
     "react-image-file-resizer": "^0.4.8",
     "react-infinite-scroll-component": "^6.1.0",
     "server-only": "^0.0.1",
+    "sharp": "^0.33.2",
     "superjson": "^2.2.1",
     "use-file-picker": "^2.1.1",
     "uuid": "^9.0.1",

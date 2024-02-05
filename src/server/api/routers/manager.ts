@@ -7,6 +7,7 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { deleteImageFromBucket, uploadImage } from "@/server/func/uploadImage";
+import Resize from "@/server/func/resize";
 
 export type Created =
   | {
@@ -406,5 +407,32 @@ export const managerRouter = createTRPCRouter({
           path_key: input.key,
         },
       });
+    }),
+  createResizedImage: protectedProcedure
+    .input(z.object({ base64: z.string(), name: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { data, isError, error } = await Resize(input.base64, input.name);
+
+      const icons = await ctx.db.company_url.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        select: {
+          icons: true,
+        },
+      });
+
+      if (isError) return { error };
+      if (data && data[0])
+        return await ctx.db.icons.update({
+          where: {
+            id: icons?.icons[0]?.id,
+          },
+          data: {
+            size_96: data[0],
+            size_192: data[1],
+            size_512: data[2],
+          },
+        });
     }),
 });
