@@ -7,7 +7,8 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { deleteImageFromBucket, uploadImage } from "@/server/func/uploadImage";
-import Resize from "@/server/func/resize";
+import { Resize } from "@/server/func/resize";
+//import { omit } from "@/server/func/omit";
 
 export type Created =
   | {
@@ -422,7 +423,15 @@ export const managerRouter = createTRPCRouter({
         },
       });
 
-      if (isError) return { error };
+      if (!icons?.icons[0]) return;
+
+      /// const iconsO = omit(["id"], icons?.icons[0]);
+
+      // console.log(iconsO);
+
+      /// const prevIcon =  "https://storage.googleapis.com/bonuslite1/default.icon.96.png";
+
+      //  if (icons?.icons[0]?.size_96 !== prevIcon) if (isError) return { error };
       if (data && data[0])
         return await ctx.db.icons.update({
           where: {
