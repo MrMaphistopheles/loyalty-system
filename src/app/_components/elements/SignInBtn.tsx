@@ -9,10 +9,17 @@ export default function SignInBtn({
   company?: string;
   main?: boolean;
 }) {
-  const url =
+  
+  let url =
     main === true
       ? `${process.env.NEXT_PUBLIC_CALLBACK_URL_FOR_USER}`
       : `${process.env.NEXT_PUBLIC_CALLBACK_URL_FOR_USER}/${company}`;
+
+  if (!process.env.NEXT_PUBLIC_CALLBACK_URL_FOR_USER)
+    url =
+      main === true
+        ? `https://lite-theta.vercel.app/signin`
+        : `https://lite-theta.vercel.app/signin/${company}`;
 
   return (
     <Button
