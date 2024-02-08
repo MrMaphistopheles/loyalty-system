@@ -9,6 +9,7 @@ import {
 import { Button, CircularProgress } from "@nextui-org/react";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
+
 export default function UploadIcon({
   pathKey,
 }: {
@@ -45,9 +46,6 @@ export default function UploadIcon({
       mutate({ base64: filesContent[0]?.content, name: filesContent[0].name });
     }
   };
-
-  console.log(errors);
-  
 
   return (
     <div className="flex w-full items-center justify-center gap-2">

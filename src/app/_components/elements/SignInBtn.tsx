@@ -11,8 +11,8 @@ export default function SignInBtn({
 }) {
   const url =
     main === true
-      ? `http://localhost:3000`
-      : `http://localhost:3000/${company}`;
+      ? `${process.env.NEXT_PUBLIC_CALLBACK_URL_FOR_USER}`
+      : `${process.env.NEXT_PUBLIC_CALLBACK_URL_FOR_USER}/${company}`;
 
   return (
     <Button

@@ -15,7 +15,7 @@ export default function NavMenu({ company }: { company: string }) {
   const image: string = session?.user?.image ?? "";
 
   const router = useRouter();
-  const url = `http://localhost:3000/${company}/signin`;
+  const url = `${process.env.NEXT_PUBLIC_CALLBACK_URL_FOR_USER}/${company}/signin`;
 
   const handleSignOutforUser = async () => {
     await signOut({ callbackUrl: url });
