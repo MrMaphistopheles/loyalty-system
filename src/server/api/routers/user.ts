@@ -330,56 +330,6 @@ export const userRouter = createTRPCRouter({
       return { items, nextCursor, hasMore };
     }),
 
-  getRatesInfo: protectedProcedure.query(async ({ ctx }) => {
-    const rates = await ctx.db.rate.findMany({
-      where: {
-        customarId: ctx.session.user.id,
-      },
-    });
-
-    let ids: string[] = [];
-    rates.forEach((e) => {
-      ids.push(e.waiterId ? e.waiterId : "");
-    });
-
-    const waiter = await ctx.db.user.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-    });
-
-    type Modified = {
-      wId: string | null;
-      name: string | null;
-      image: string | null;
-    };
-
-    let modified: Modified[] = [];
-
-    waiter.forEach((e) => {
-      modified.push({
-        wId: e.id,
-        name: e.name,
-        image: e.image,
-      });
-    });
-
-    const data = rates.map((i) => {
-      const match = modified.find((e) => e.wId === i.waiterId);
-      if (match) {
-        return {
-          ...i,
-          description: i.description?.toString("utf-8"),
-          ...match,
-        };
-      }
-    });
-
-    return data;
-  }),
-
   getRateInfo: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {

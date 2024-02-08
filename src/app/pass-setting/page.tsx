@@ -97,7 +97,6 @@ export default function page() {
           countOf={5}
           color={color}
           icon={image}
-          linkToGoogleW="/"
           linkToMenu="/"
           qrVal={color}
           position="relative"
