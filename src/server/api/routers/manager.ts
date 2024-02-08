@@ -414,6 +414,8 @@ export const managerRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { data, isError, error } = await Resize(input.base64, input.name);
 
+      if (isError) return { isError, error, data };
+
       const icons = await ctx.db.company_url.findFirst({
         where: {
           userId: ctx.session.user.id,
@@ -423,7 +425,7 @@ export const managerRouter = createTRPCRouter({
         },
       });
 
-      if (!icons?.icons[0]) return;
+      // if (!icons?.icons[0]) return;
 
       /// const iconsO = omit(["id"], icons?.icons[0]);
 

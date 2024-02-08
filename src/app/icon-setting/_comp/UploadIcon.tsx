@@ -25,8 +25,8 @@ export default function UploadIcon({
       new FileTypeValidator(["jpeg", "png", "jpg"]),
       new FileSizeValidator({ maxFileSize: 50 * 1024 * 1024 /* 50 MB */ }),
       new ImageDimensionsValidator({
-        maxHeight: 1000,
-        maxWidth: 1000,
+        maxHeight: 2500,
+        maxWidth: 2500,
         minHeight: 512,
         minWidth: 512,
       }),
@@ -46,6 +46,9 @@ export default function UploadIcon({
     }
   };
 
+  console.log(errors);
+  
+
   return (
     <div className="flex w-full items-center justify-center gap-2">
       <Button
@@ -53,7 +56,7 @@ export default function UploadIcon({
         className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
         onClick={openFilePicker}
       >
-        {error
+        {errors.length > 1
           ? "Помилка зображення"
           : filesContent[0]?.content
             ? "Змінити"
