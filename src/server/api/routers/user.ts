@@ -246,6 +246,90 @@ export const userRouter = createTRPCRouter({
     return data;
   }),
 
+  getRatesList: protectedProcedure
+    .input(
+      z.object({
+        companyKey: z.string(),
+        limit: z.number(),
+        cursor: z.string().nullish(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { limit, cursor, companyKey } = input;
+
+      const cId = await ctx.db.company_url.findFirst({
+        where: {
+          path_key: companyKey,
+        },
+        select: {
+          userId: true,
+        },
+      });
+
+      const waiter = await ctx.db.user.findUnique({
+        where: {
+          id: cId?.userId,
+        },
+        select: {
+          created: {
+            where: {
+              role: "WAITER",
+            },
+          },
+        },
+      });
+
+      const wId = waiter?.created.map((i) => i.id);
+
+      const waiteData = waiter?.created.map((i) => {
+        return {
+          wId: i.id,
+          image: i.image,
+          name: i.name,
+        };
+      });
+
+      const rate = await ctx.db.rate.findMany({
+        take: limit + 1,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+        where: {
+          waiterId: {
+            in: wId,
+          },
+        },
+      });
+
+      const items = rate.map((i) => {
+        const mutch = waiteData?.find((e) => e.wId === i.waiterId);
+
+        if (mutch) {
+          return {
+            ...i,
+            description: i.description?.toString("utf-8") ?? "",
+            name: mutch.name,
+            image: mutch.image,
+          };
+        }
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      if (rate.length > limit) {
+        const nextItem = rate.pop();
+        nextCursor = nextItem?.id;
+      }
+
+      let hasMore = true;
+      if (nextCursor === undefined) {
+        hasMore = false;
+      }
+
+      return { items, nextCursor, hasMore };
+    }),
+
   getRatesInfo: protectedProcedure.query(async ({ ctx }) => {
     const rates = await ctx.db.rate.findMany({
       where: {
@@ -292,6 +376,7 @@ export const userRouter = createTRPCRouter({
         };
       }
     });
+
     return data;
   }),
 
@@ -324,6 +409,7 @@ export const userRouter = createTRPCRouter({
 
       return data;
     }),
+
   updateRate: protectedProcedure
     .input(
       z.object({ id: z.string(), stars: z.number(), description: z.string() }),

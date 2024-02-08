@@ -44,7 +44,7 @@ export default function page() {
     multiple: false,
     validators: [
       new FileAmountLimitValidator({ max: 1 }),
-      new FileTypeValidator(["jpg", "png"]),
+      new FileTypeValidator(["jpg", "png", "jpeg"]),
       new FileSizeValidator({ maxFileSize: 50 * 1024 * 1024 /* 50 MB */ }),
       new ImageDimensionsValidator({
         maxHeight: 1600, // in pixels
