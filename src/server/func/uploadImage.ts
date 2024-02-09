@@ -85,7 +85,6 @@ async function deleteImage(
     credentials,
   });
   const parts = fileName.split("/");
-  console.log(parts);
 
   const filename = parts[parts.length - 1];
   if (filename !== undefined) {

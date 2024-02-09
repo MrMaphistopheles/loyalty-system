@@ -25,9 +25,16 @@ export default function Card({ company }: { company: string }) {
     }
   };
 
-  const { data, refetch, isSuccess } = api.user.getUserDataT.useQuery({
-    key: company,
-  });
+  const { data, refetch, isSuccess } = api.user.getUserDataT.useQuery(
+    {
+      key: company,
+    },
+    {
+      refetchOnMount: false,
+    },
+  );
+
+  console.log(data);
 
   const { mutate, isLoading: passIsLoading } =
     api.user.autoCreateBonusAcc.useMutation({
@@ -38,7 +45,7 @@ export default function Card({ company }: { company: string }) {
 
   useEffect(() => {
     if (data && data[0]) {
-      if (!data[0]?.points) mutate({ key: company });
+      if (data[0]?.points === undefined) mutate({ key: company });
     }
     return () => {};
   }, [data]);
@@ -58,28 +65,27 @@ export default function Card({ company }: { company: string }) {
   return (
     <div className="flex w-full flex-col items-center justify-end gap-3">
       <div className="relative w-full">
-        {data && data[0]?.points
-          ? data.map((i, index) => (
-              <div key={index} onClick={() => changePosition(index)}>
-                <Pass
-                  z={index}
-                  name={i?.name ?? ""}
-                  translate={show === index ? -(height / 15) : height / 12}
-                  show={show === index ? true : false}
-                  userName={session?.user.name ?? "s"}
-                  countOf={
-                    i.bonusSystem && i.bonusSystem[0]?.gift && i.points
-                      ? calculateCount(i.bonusSystem[0]?.gift, i.points)
-                      : 0
-                  }
-                  color={i.Theme && i.Theme[0]?.color}
-                  icon={i.Theme && i.Theme[0]?.image}
-                  linkToMenu={`/${company}/menu?id=${i.id}`}
-                  qrVal={session?.user.id ?? ""}
-                />
-              </div>
-            ))
-          : null}
+        {data &&
+          data.map((i, index) => (
+            <div key={index} onClick={() => changePosition(index)}>
+              <Pass
+                z={index}
+                name={i?.name ?? ""}
+                translate={show === index ? -(height / 15) : height / 12}
+                show={show === index ? true : false}
+                userName={session?.user.name ?? "s"}
+                countOf={
+                  i.bonusSystem && i.bonusSystem[0]?.gift && i.points
+                    ? calculateCount(i.bonusSystem[0]?.gift, i.points)
+                    : 0
+                }
+                color={i.Theme && i.Theme[0]?.color}
+                icon={i.Theme && i.Theme[0]?.image}
+                linkToMenu={`/${company}/menu?id=${i.id}`}
+                qrVal={session?.user.id ?? ""}
+              />
+            </div>
+          ))}
       </div>
     </div>
   );
@@ -215,7 +221,7 @@ export function Pass({
               className="rounded-full bg-white text-lg text-black"
             >
               <svg
-                className="h-6 w-6 text-white dark:text-black"
+                className="h-6 w-6 text-black"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
