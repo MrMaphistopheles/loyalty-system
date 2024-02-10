@@ -1,4 +1,4 @@
-"use client";
+
 
 import Authoraised from "@/app/_components/app/Authoraised";
 import Message from "./_comp/Message";

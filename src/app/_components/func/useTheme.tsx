@@ -20,12 +20,12 @@ export function Body({
           `${font}` +
           (isDark
             ? "text-white dark dark:bg-black"
-            : "text-black light light:bg-[#ebfbff]")
+            : "text-black light light:bg-[#f6fdff]")
         }
       >
         <HelmetProvider>
           <Helmet>
-            <meta name="theme-color" content={isDark ? "#000" : "#ebfbff"} />
+            <meta name="theme-color" content={isDark ? "#000" : "#f6fdff"} />
           </Helmet>
         </HelmetProvider>
         {children}

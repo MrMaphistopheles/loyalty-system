@@ -385,6 +385,7 @@ export const userRouter = createTRPCRouter({
         customarId: z.string().optional(),
         amount: z.number(),
         waiterName: z.string(),
+        company: z.string(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -393,6 +394,7 @@ export const userRouter = createTRPCRouter({
         orderDesc: `Чайові для ${input.waiterName}`,
         amount: input.amount,
         email: ctx.session.user.email,
+        pathKey: input.company,
       };
 
       const { checkout_url, payment_id, response_status } =
@@ -410,7 +412,6 @@ export const userRouter = createTRPCRouter({
           orderStatus: "in_process",
         },
       });
-      console.log(tipDetails);
 
       return { redirectUrl: checkout_url };
     }),

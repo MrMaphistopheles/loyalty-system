@@ -16,11 +16,13 @@ export async function Payment({
   orderDesc,
   amount,
   email,
+  pathKey,
 }: {
   orderId: string;
   orderDesc: string;
   amount: number;
   email: string | null | undefined;
+  pathKey: string;
 }) {
   const paymentKey = "PhdrLInCK7Ayl4F6Kdt6GsfFDvWdifsU";
   const reqData = {
@@ -31,7 +33,7 @@ export async function Payment({
     merchant_id: "1539840",
     sender_email: email,
     lang: "uk",
-    response_url: "https://lite-theta.vercel.app/fondy-response"
+    response_url: `https://lite-theta.vercel.app/api/fondy-response?path-key=${pathKey}`,
   };
 
   const url = "https://pay.fondy.eu/api/checkout/url/";
@@ -60,6 +62,5 @@ export async function Payment({
     },
   });
 
-  //console.log(data);
   return { ...data.response };
 }
