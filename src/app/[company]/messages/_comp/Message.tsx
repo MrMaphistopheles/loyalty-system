@@ -1,3 +1,4 @@
+"use client";
 import { Avatar, Button, ScrollShadow } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { api } from "@/trpc/react";
