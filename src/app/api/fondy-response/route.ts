@@ -3,8 +3,9 @@ import { NextRequest } from "next/server";
 import { getServerAuthSession } from "../../../server/auth";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  console.log(body);
+  console.log(req);
+
+  //const body = await req.json();
 
   return Response.redirect("https://lite-theta.vercel.app");
 }
