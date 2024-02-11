@@ -4,8 +4,8 @@ import { getServerAuthSession } from "../../../server/auth";
 export async function POST(req: Request) {
   try {
     const res = await req.json();
-    return Response.json({ res, req });
+    console.log(res);
   } catch (error) {
-    return Response.json({ error, req });
+    console.log(error);
   }
 }
