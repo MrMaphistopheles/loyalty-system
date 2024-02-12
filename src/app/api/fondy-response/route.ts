@@ -48,7 +48,7 @@ export async function POST(req: Request) {
             ),
             amount: res.amount,
             approval_code: res.approval_code,
-            card_bin: res.card_bin,
+            card_bin: JSON.stringify(res.card_bin),
             card_type: res.card_type,
             currency: res.currency,
             eci: res.eci,
