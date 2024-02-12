@@ -6,7 +6,7 @@ import { type FondyCallback } from "@/gtypes/fondy-res";
 export async function POST(req: Request) {
   try {
     const res: FondyCallback = await req.json();
-    if (!res) return { msg: "no callback data" };
+    if (!res) return Response.json({ msg: "no callback data" });
 
     const tips = await db.tips.findUnique({
       where: {
@@ -88,8 +88,8 @@ export async function POST(req: Request) {
         },
       },
     });
-    return { status: 200, update };
+    return Response.json({ status: 200 });
   } catch (error) {
-    return { error, status: 500, msg: "unknow server error" };
+    return Response.json({ error, status: 500, msg: "unknow server error" });
   }
 }
