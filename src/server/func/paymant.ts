@@ -33,7 +33,7 @@ export async function Payment({
     merchant_id: "1539840",
     sender_email: email,
     lang: "uk",
-    response_url: `https://lite-theta.vercel.app/fondy-response/${pathKey}`,
+    response_url: `https://lite-theta.vercel.app/${pathKey}/fondy-response`,
     server_callback_url: `https://lite-theta.vercel.app/api/fondy-response`,
   };
 
