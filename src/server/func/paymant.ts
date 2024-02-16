@@ -24,13 +24,13 @@ export async function Payment({
   email: string | null | undefined;
   pathKey: string;
 }) {
-  const paymentKey = "PhdrLInCK7Ayl4F6Kdt6GsfFDvWdifsU";
+  const paymentKey = process.env.PAYMENT_KEY
   const reqData = {
     order_id: orderId,
     order_desc: orderDesc,
     currency: "UAH",
     amount: `${amount}`,
-    merchant_id: "1539840",
+    merchant_id: process.env.MERCHANT_ID,
     sender_email: email,
     lang: "uk",
     response_url: `https://lite-theta.vercel.app/${pathKey}/fondy-response`,
@@ -48,7 +48,7 @@ export async function Payment({
   const joinedString = sortedKeys
     .map((i) => reqData[i as keyof typeof reqData])
     .join("|");
-  console.log(joinedString);
+  
 
   const signatureStringN = `${paymentKey}|${joinedString}`;
 
