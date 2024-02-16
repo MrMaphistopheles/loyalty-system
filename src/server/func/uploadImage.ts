@@ -44,55 +44,50 @@ const cr: Credentials = {
   universe_domain: "googleapis.com",
 };
 
-const uploadToBucket = async (
-  data: string,
-  fileName: string,
-  bucketname: string,
-  credentials: Credentials,
-  options: UploadOptions,
-): Promise<void> => {
+
+export function googleBucket(name: string, data?: string) {
+  const bucketname = "bonuslite1";
+  const credentials = cr;
+  const options = fileOptions;
+
   const storage = new Storage({
     credentials,
   });
-  const file = storage.bucket(bucketname).file(fileName);
-  const base64encodedString: string = data.replace(
-    /^data:image\/\w+;base64,/,
-    "",
-  );
-  const buffer = Buffer.from(base64encodedString, "base64");
-  const upload = await file.save(buffer, options);
-};
 
-export async function uploadImage(data: string, name: string) {
-  const fileName = `${uuidv4()}.${name}`;
-  const up = await uploadToBucket(
-    data,
-    fileName,
-    "bonuslite1",
-    cr,
-    fileOptions,
-  );
-  const path: string = `https://storage.googleapis.com/bonuslite1/${fileName}`;
-  return path;
-}
+  return {
+    async uploadImageToBucket() {
+      try {
+        if (!data) return { error: "data don't exist" };
 
-async function deleteImage(
-  credentials: Credentials,
-  bucketname: string,
-  fileName: string,
-) {
-  const storage = new Storage({
-    credentials,
-  });
-  const parts = fileName.split("/");
+        const fileName = `${uuidv4()}.${name}`;
+        const file = storage.bucket(bucketname).file(fileName);
+        const base64encodedString: string = data.replace(
+          /^data:image\/\w+;base64,/,
+          "",
+        );
+        const buffer = Buffer.from(base64encodedString, "base64");
+        await file.save(buffer, options);
+        const path: string = `https://storage.googleapis.com/bonuslite1/${fileName}`;
+        return path;
+      } catch (error) {
+        return { error };
+      }
+    },
 
-  const filename = parts[parts.length - 1];
-  if (filename !== undefined) {
-    const file = await storage.bucket(bucketname).file(filename).delete();
-    console.log(file);
-  }
-}
+    async deleteImageFromBuckets() {
+      try {
+        const parts = name.split("/");
+        const filename = parts[parts.length - 1];
 
-export async function deleteImageFromBucket(filePath: string) {
-  await deleteImage(cr, "bonuslite1", filePath);
+        if (!filename) return { error: "file name don't exist" };
+        if (filename !== undefined) {
+          const file = await storage.bucket(bucketname).file(filename).delete();
+          console.log(file);
+          return { success: "Image deleted" };
+        }
+      } catch (error) {
+        return { error };
+      }
+    },
+  };
 }

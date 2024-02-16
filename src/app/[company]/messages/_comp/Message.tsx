@@ -66,7 +66,13 @@ export default function Message({ company }: { company: string }) {
             items.map((i) => (
               <React.Fragment key={i?.id}>
                 <Link href={`/${company}/rate?id=${i?.id}`} className="w-full">
-                  <div className="glass flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3">
+                  <div
+                    className={
+                      i?.stars === 0
+                        ? " bg-blue-600 text-white flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3"
+                        : "glass flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3"
+                    }
+                  >
                     <div className="flex w-full items-center justify-start gap-3">
                       <Avatar size="md" src={i?.image ? i?.image : ""} />
                       <h1>{i?.name}</h1>

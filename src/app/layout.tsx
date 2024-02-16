@@ -36,7 +36,7 @@ export default async function RootLayout({
       <Body font={`font-sans ${inter.variable} `}>
         <TRPCReactProvider cookies={cookies().toString()} session={session}>
           <UiProvider>
-            <div className="flex h-[100dvh] flex-col items-center justify-between">
+            <div className="flex h-[100dvh] flex-col items-center justify-between overflow-auto hide-scroll">
               {session?.user.role === "USER" ? (
                 <>{children}</>
               ) : (

@@ -6,7 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { deleteImageFromBucket, uploadImage } from "@/server/func/uploadImage";
+import { googleBucket } from "@/server/func/uploadImage";
 import { Resize } from "@/server/func/resize";
 
 export type Created =
@@ -134,7 +134,10 @@ export const managerRouter = createTRPCRouter({
   updateTheme: protectedProcedure
     .input(z.object({ color: z.string(), image: z.string(), name: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const path = await uploadImage(input.image, input.name);
+      /// task implemet delet prev image from bucket
+      const upload = googleBucket(input.name, input.image);
+      const path = await upload.uploadImageToBucket();
+      if (typeof path !== "string") return { error: "upload error" };
       return await ctx.db.theme.updateMany({
         where: {
           userId: ctx.session.user.id,
@@ -336,7 +339,9 @@ export const managerRouter = createTRPCRouter({
       });
 
       if (findImage) {
-        await deleteImageFromBucket(findImage.path);
+        const image = googleBucket(findImage.path);
+        const res = await image.deleteImageFromBuckets();
+        if (res?.error) return { error: res.error };
         const deleteImage = await ctx.db.images.deleteMany({
           where: {
             dishId: input.id,
@@ -344,7 +349,9 @@ export const managerRouter = createTRPCRouter({
         });
       }
 
-      const path = await uploadImage(input.image, input.imageName);
+      const upload = googleBucket(input.imageName, input.image);
+      const path = await upload.uploadImageToBucket();
+      if (typeof path !== "string") return { error: "upload error" };
 
       const response = await ctx.db.dish.update({
         where: {
@@ -433,7 +440,8 @@ export const managerRouter = createTRPCRouter({
 
       if (rest.size_96 !== prevIcon) {
         Object.keys(rest).map(async (i) => {
-          await deleteImageFromBucket(rest[i as keyof typeof rest]);
+          const deleteImage = await googleBucket(rest[i as keyof typeof rest]);
+          const res = await deleteImage.deleteImageFromBuckets();
         });
       }
 

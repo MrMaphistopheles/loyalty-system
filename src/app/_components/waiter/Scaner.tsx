@@ -3,15 +3,24 @@
 import { api } from "@/trpc/react";
 import { Button, CircularProgress } from "@nextui-org/react";
 import { QrScanner } from "@yudiel/react-qr-scanner";
+import { useEffect, useState } from "react";
 
 type Data = {
   status: number;
 };
 
 export default function Scaner() {
-  const { data, mutate, isLoading, isError } = api.waiter.scan.useMutation();
+  const [status, setStatus] = useState<Data>();
 
-  let status: Data = data as Data;
+  const { data, mutate, isLoading, isError, isSuccess } =
+    api.waiter.scan.useMutation();
+
+  useEffect(() => {
+    if (data) {
+      setStatus(data as Data);
+    }
+  }, [isSuccess]);
+
 
   const update = (clientId: string) => {
     mutate({ clientId: clientId });
@@ -24,26 +33,32 @@ export default function Scaner() {
     return <div>server error</div>;
   }
   if (status && status.status === 200) {
-    return <Gift />;
+    return <Gift set={setStatus} />;
   }
   if (status && status.status === 201) {
-    return <Counted />;
+    return <Counted set={setStatus} />;
   }
 
-  return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <div className="flex w-10/12 flex-wrap overflow-hidden rounded-2xl md:max-w-[25rem]">
-        <QrScanner
-          onDecode={(result) => update(result)}
-          scanDelay={2000}
-          onError={(error) => console.log(error?.message)}
-        />
+  if (status && status.status === 202) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center">
+        <div className="flex w-10/12 flex-wrap overflow-hidden rounded-2xl md:max-w-[25rem]">
+          <QrScanner
+            onDecode={(result) => update(result)}
+            scanDelay={2000}
+            onError={(error) => console.log(error?.message)}
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
-function Gift() {
+function Gift({
+  set,
+}: {
+  set: React.Dispatch<React.SetStateAction<Data | undefined>>;
+}) {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4">
       <div className="flex w-full items-center justify-center p-12">
@@ -84,7 +99,9 @@ function Gift() {
         size="lg"
         className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
         onClick={() => {
-          window.location.reload();
+          set({
+            status: 202,
+          });
         }}
       >
         Повернутися
@@ -93,7 +110,11 @@ function Gift() {
   );
 }
 
-function Counted() {
+function Counted({
+  set,
+}: {
+  set: React.Dispatch<React.SetStateAction<Data | undefined>>;
+}) {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4">
       <div className="flex w-full items-center justify-center px-7">
@@ -183,7 +204,9 @@ function Counted() {
         size="lg"
         className="w-2/3 bg-black text-white dark:bg-white dark:text-black"
         onClick={() => {
-          window.location.reload();
+          set({
+            status: 202,
+          });
         }}
       >
         Повернутися

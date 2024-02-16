@@ -1,4 +1,4 @@
-import { uploadImage } from "@/server/func/uploadImage";
+import { googleBucket } from "@/server/func/uploadImage";
 import Jimp from "jimp";
 
 export async function Resize(base64: string, name: string) {
@@ -18,12 +18,16 @@ export async function Resize(base64: string, name: string) {
       const res = await Jimp.read(buffer);
       if (!mimType) throw new Error("NO MimType");
       const resB = await res.resize(x, x).getBase64Async(mimType);
-      return await uploadImage(resB, name);
+
+      const upload = await googleBucket(name, resB);
+      const path = await upload.uploadImageToBucket();
+      if (path) return path;
     };
 
     const data = await Promise.all(
       sizes.map(async (i) => {
-        return await path(i, img);
+        const pathA = await path(i, img);
+        if (typeof pathA === "string") return pathA;
       }),
     );
 
